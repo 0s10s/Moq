@@ -2,251 +2,393 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خَصاوي - منصة الربح العلالي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>الخصاوي الكبرى - منصة المهام العملاقة</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* لمنع تحديد النص للمزح */
+            font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
         }
         body {
-            background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
-            font-family: 'Tahoma', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(145deg, #0f2b1d, #071a10);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
-        .card {
-            background: rgba(255,245,215,0.95);
-            max-width: 500px;
-            width: 100%;
-            border-radius: 70px 70px 70px 30px;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,200,0.6);
-            overflow: hidden;
-            backdrop-filter: blur(2px);
-            transition: 0.3s;
-            border: 1px solid #ffd966;
+        /* الحاوية الرئيسية */
+        .dashboard {
+            max-width: 1300px;
+            margin: 0 auto;
         }
+        /* الرأس العلوي */
         .header {
-            background: #ffb347;
-            background: linear-gradient(135deg, #f9a602, #ff7e05);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 5px solid #c45100;
-        }
-        .header h1 {
-            font-size: 2.4rem;
-            text-shadow: 2px 2px 0 #b45f1b;
-            color: #fff4e0;
-            letter-spacing: 2px;
-        }
-        .header p {
-            color: #fff0bb;
-            font-weight: bold;
-        }
-        .balance-box {
-            background: #2c2b26;
-            margin: 20px;
-            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
             border-radius: 60px;
-            text-align: center;
-            color: gold;
-            box-shadow: inset 0 0 8px #00000055, 0 8px 12px rgba(0,0,0,0.2);
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border: 1px solid #ffb34755;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-        .balance-box span {
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffd966, #ffaa33);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px #ffaa3344;
+        }
+        .balance-card {
+            background: #1e2a1aee;
+            padding: 10px 25px;
+            border-radius: 50px;
+            border-right: 6px solid #ffaa33;
+        }
+        .balance-card span {
             font-size: 2rem;
             font-weight: bold;
-            background: #00000066;
-            display: inline-block;
-            padding: 5px 25px;
-            border-radius: 40px;
-            letter-spacing: 3px;
+            color: #ffcc66;
         }
-        .task-area {
-            background: #ecd9b4;
-            margin: 20px;
-            padding: 25px;
-            border-radius: 50px;
+        .sub {
+            color: #bbaa77;
+            font-size: 0.8rem;
+        }
+        /* شبكة المهام */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .task-card {
+            background: #251f16e6;
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 20px;
+            transition: 0.2s;
+            border: 1px solid #b87c3a;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffbb55;
+        }
+        .task-icon {
+            font-size: 3.5rem;
             text-align: center;
-            box-shadow: inset 0 0 0 2px #fff8e7, 0 8px 18px #00000033;
         }
         .task-title {
             font-size: 1.8rem;
             font-weight: bold;
-            background: #aa6f2e;
-            display: inline-block;
-            padding: 6px 20px;
-            border-radius: 40px;
-            color: white;
-            margin-bottom: 20px;
+            text-align: center;
+            margin: 15px 0;
+            color: #ffdd99;
         }
         .task-desc {
-            font-size: 1.3rem;
-            background: #ffffdd;
+            background: #00000044;
             padding: 12px;
             border-radius: 30px;
-            margin: 15px 0;
-            border-right: 8px solid #e67e22;
+            text-align: center;
+            color: #f0e2b6;
+            margin-bottom: 20px;
+        }
+        .reward-hint {
+            font-size: 0.9rem;
+            color: #ffaa66;
+            text-align: center;
+            margin-bottom: 15px;
         }
         button {
-            background: #f39c12;
+            width: 100%;
+            background: linear-gradient(95deg, #f39c12, #e67e22);
             border: none;
-            font-size: 1.6rem;
+            padding: 14px;
+            font-size: 1.4rem;
             font-weight: bold;
-            padding: 12px 28px;
             border-radius: 60px;
             color: #2c1c0a;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 5px 0 #b45f1b;
-            font-family: inherit;
-            width: 80%;
-            margin-top: 15px;
+            transition: 0.1s;
+            box-shadow: 0 5px 0 #a55800;
         }
         button:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #b45f1b;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #a55800;
         }
-        .message {
-            background: #1e2a1a;
-            margin: 15px 20px;
-            padding: 12px;
+        .lock-btn {
+            background: #4a3a28;
+            box-shadow: none;
+            cursor: default;
+            opacity: 0.6;
+        }
+        .side-stats {
+            background: #1a2a1acc;
             border-radius: 40px;
-            color: #ffeeaa;
-            text-align: center;
-            font-size: 1rem;
-            border-right: 5px solid #ffc107;
-            transition: 0.3s;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        .footer {
-            background: #5a3a1a;
-            padding: 12px;
+        .stat-item {
+            background: #00000066;
+            border-radius: 50px;
+            padding: 10px 20px;
+            flex: 1;
             text-align: center;
-            color: #ffeaac;
-            font-size: 0.8rem;
         }
         .fake-withdraw {
-            background: #3a2a1f;
-            margin: 0 20px 20px 20px;
-            padding: 8px;
-            border-radius: 30px;
-            color: #bda47a;
+            background: #3a2819;
             text-align: center;
-            font-size: 0.8rem;
+            padding: 12px;
+            border-radius: 50px;
+            margin-top: 20px;
+            color: #bb8855;
+            font-weight: bold;
+        }
+        .leaderboard {
+            background: #181c12aa;
+            border-radius: 40px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        @media (max-width:700px){
+            .header{ flex-direction: column; gap:15px; text-align:center;}
         }
     </style>
 </head>
 <body>
-<div class="card">
+
+<div class="dashboard">
+    <!-- الرأس -->
     <div class="header">
-        <h1>💰 خَصاوي 🐫</h1>
-        <p>منصة الربح العلالي المضمونة 100% (للمزح فقط)</p>
-    </div>
-
-    <div class="balance-box">
-        📦 رصيد الخَصاوي الحالي : <span id="balance">0</span> 🪙
-    </div>
-
-    <div class="task-area">
-        <div class="task-title">⚡ المهمة الأولى ⚡</div>
-        <div class="task-desc">
-            🃏 <strong>"العب بمال عمك .. يروح همك!"</strong> 🃏
-            <br>
-            اضغط على الزر .. ولا تسأل وين عمك!
+        <div class="logo">
+            <h1>🐫 الخصاوي الكبرى 🪙</h1>
+            <div class="sub">امبراطورية المهام السريعة</div>
         </div>
-        <button id="doTaskBtn">🏆 أشتغل عليها 🏆</button>
+        <div class="balance-card">
+            📦 رصيد الخصاوي: <span id="totalKhasawi">0</span> 🪙
+            <div class="sub">آخر تحديث فوري</div>
+        </div>
     </div>
 
-    <div id="msgBox" class="message">
-        💬 إضغط على الزر لتستلم أرباحك الوهمية ..
+    <!-- شبكة المهام (3 مهام) -->
+    <div class="tasks-grid" id="tasksContainer"></div>
+
+    <!-- إحصائيات جانبية وهمية -->
+    <div class="side-stats">
+        <div class="stat-item">🏆 المتصدر اليوم: <strong>ابوخالد</strong> (12,340 خصاوي)</div>
+        <div class="stat-item">⚡ سرعة الإنجاز: <strong>فائقة</strong></div>
+        <div class="stat-item">🎁 مكافأة التسلسل: <span id="comboBonus">0</span> خصاوي</div>
+    </div>
+
+    <!-- لوحة متابعين وهمية -->
+    <div class="leaderboard">
+        💎 قائمة كبار الخصاوية 💎 <br>
+        1. 🥇 ابوخالد - 14300 خصاوي &nbsp;&nbsp; 2. 🥈 سيف - 11200 &nbsp;&nbsp; 3. 🥉 العنود - 9800
     </div>
 
     <div class="fake-withdraw">
-        🚫 السحب غير مفعل 🚫 (للمزح التعليمي فقط)
+        🚫 السحب غير متاح حالياً (تحديث النظام) 🚫
     </div>
-    <div class="footer">
-        ⚠️ هذا الموقع للمزاح والتعلم .. لا يربح ولا يصرف ولا يضحك عليك حقيقي ⚠️
+    <div style="text-align:center; margin-top:12px; font-size:12px; color:#5e5a4a;">
+        نظام داخلي لتحديد الأرباح اليومية
     </div>
 </div>
 
 <script>
-    // ********************************************************
-    // سكربت بسيط للمزح — بدون أي تكامل مع محافظ أو خوادم خارجية
-    // كل شيء يتم داخل المتصفح، والرصيد يتغير وهمياً فقط.
-    // ********************************************************
-
-    let صندوقالخصاوي = 0;
-    const balanceSpan = document.getElementById('balance');
-    const msgDiv = document.getElementById('msgBox');
-    const taskBtn = document.getElementById('doTaskBtn');
-
-    // رسائل عشوائية مضحكة تظهر بعد كل ضغطة
-    const رسائلعشوائية = [
-        "🎭 يلا شغلت عمك .. وهمك راح 🎭 (أرباحك صارت 5 خصاوي وهمية)",
-        "🐫 تم إنجاز المهمة .. عمك يقول مبروك بس ما يعطيك 🐫 (حصلت 3 خصاوي)",
-        "😂 اللعب بمال عمك فلة .. بس مافلوس حقيقية 😂 (أضيف 7 خصاوي وهمية)",
-        "🎲 عمك باع الحصان .. ولا أعطاك ريال! (ربح وهمي: 2 خَصاوي)",
-        "🧞‍♂️ يظهر لك خصاوي .. لكن خصاوي أكواد مزحة (++4 خصاوي)",
-        "☕️ تفضل 10 خصاوي زيادة .. بس خصاوي مزح مثل خصاوي عمك",
-        "💸 عمك يضحك معك .. رصيدك الخصاوي زاد (زاد 6 خصاوي)"
+    // --------------------------------------------------------------
+    // بيانات المهام : (اسم، ايقونة، وصف، الربح الأساسي، شرط فتح)
+    // نعمل نظام تطور: المهمة الثانية تتفتح بعد 3 انجازات للمهمة الأولى
+    // المهمة الثالثة تتفتح بعد 5 انجازات للمهمة الثانية
+    // --------------------------------------------------------------
+    let kh = 0;            // رصيد الخصاوي
+    let countTask1 = 0;    // كم مرة تمت المهمة1 (جمع الخصاوي)
+    let countTask2 = 0;    // كم مرة تمت المهمة2 (لحسات وماصات)
+    let countTask3 = 0;    // المهمة الثالثة (تقعد علي تربح ضعف)
+    
+    let combo = 0;          // كومبو وهمي يزيد مع كل مهمة متتالية
+    
+    // عناصر
+    const totalSpan = document.getElementById('totalKhasawi');
+    const comboBonusSpan = document.getElementById('comboBonus');
+    const tasksContainer = document.getElementById('tasksContainer');
+    
+    // تعريف المهام
+    const tasks = [
+        {
+            id: 1,
+            name: "🥕 جمع الخصاوي",
+            icon: "🐪",
+            desc: "اضغط لتجمع الخصاوي من الصحراء الافتراضية",
+            baseReward: 5,
+            isLocked: false,
+            condition: () => true,
+            action: () => { 
+                let reward = 5 + Math.floor(Math.random() * 6); // 5-10
+                if(combo > 2) reward = Math.floor(reward * 1.3);
+                addKhasawi(reward);
+                countTask1++;
+                updateCombo(1);
+                showMsg(`✅ تم جمع ${reward} خصاوي! العدد الكلي ${kh}`);
+                if(countTask1 === 3) enableTask(2);
+                if(countTask1 === 7) enableTask(3);
+            }
+        },
+        {
+            id: 2,
+            name: "👅 لحسات وماصات",
+            icon: "🍭",
+            desc: "لحس ومص .. يزيد أرباحك 3 أضعاف مؤقت",
+            baseReward: 12,
+            isLocked: true,
+            condition: () => countTask1 >= 3,
+            action: () => {
+                let extra = Math.floor(Math.random() * 15) + 12; // 12-26
+                if(combo > 3) extra = extra * 2;
+                addKhasawi(extra);
+                countTask2++;
+                updateCombo(2);
+                showMsg(`🍬 لحس ومص ينتج ${extra} خصاوي ، بريق الخصاوية يزداد`);
+                if(countTask2 >= 5) enableTask(3);
+            }
+        },
+        {
+            id: 3,
+            name: "💺 تقعد علي .. تربح ضعف",
+            icon: "💺",
+            desc: "اضغط واجلس على الكنز .. مضاعف الربح لكل مهمة سابقة",
+            baseReward: 0,
+            isLocked: true,
+            condition: () => countTask2 >= 5,
+            action: () => {
+                // مضاعفة الرصيد الحالي (تأثير وهمي خرافي)
+                let old = kh;
+                let doubled = kh;
+                addKhasawi(doubled);
+                countTask3++;
+                updateCombo(3);
+                showMsg(`⚡ البركة: قعدت علينا وضاعفت رصيدك! كان ${old} صار ${kh} ⚡`);
+                if(countTask3 === 1) showMsg(`🎉 انت حققت معجزة الخصاوي! الناس تشوفك اسطورة 🎉`);
+            }
+        }
     ];
-
-    // رسائل ساخرة خاصة لما تحاول السحب (المستخدم ممكن يضغط بالغلط لكن مافيه زر سحب حقيقي)
-    function تحديثالواجهة() {
-        balanceSpan.innerText = صندوقالخصاوي;
+    
+    function addKhasawi(amount) {
+        kh += amount;
+        totalSpan.innerText = Math.floor(kh);
+        // لا سقف للرصيد
     }
-
-    function اضفربالمهمة() {
-        // محاكاة أن المهمة تعطي كميات وهمية بين 1 و 12 خصاوي
-        const ارباحوهمية = Math.floor(Math.random() * 12) + 1;  // من 1 إلى 12
-        صندوقالخصاوي += ارباحوهمية;
-        
-        // اختيار رسالة عشوائية مع وضع المبلغ
-        let رسالةعشوائية = رسائلعشوائية[Math.floor(Math.random() * رسائلعشوائية.length)];
-        // أضيف تفصيل مزح
-        رسالةعشوائية = رسالةعشوائية + ` (مجموع أرباحك الآن ${صندوقالخصاوي} خصاوي وهمية)`;
-        
-        msgDiv.innerHTML = `🎉 ${رسالةعشوائية} 🎉 <br> 🔮 “تعال باكر .. بكرة تستلم فلوسك” 🔮 لكن أكيد بكرة نفس الحكاية 🤡`;
-        
-        // تأثير بصري سريع
-        taskBtn.style.transform = 'scale(0.97)';
-        setTimeout(() => { taskBtn.style.transform = ''; }, 120);
-        
-        تحديثالواجهة();
-        
-        // كل 5 مهام نضيف رسالة استهبال انه بكرة ماكو شي
-        if(صندوقالخصاوي % 15 === 0 && صندوقالخصاوي > 0) {
-            msgDiv.innerHTML = `😭 ${msgDiv.innerHTML} <br> ⚠️ مهما زاد رصيدك .. ماكو سحب ههههه ⚠️`;
+    
+    function updateCombo(taskId) {
+        combo++;
+        comboBonusSpan.innerText = combo;
+        if(combo % 7 === 0) {
+            let gift = 50;
+            addKhasawi(gift);
+            showMsg(`🎁 كومبو رهيب! هدية ${gift} خصاوي إضافية!`);
+        }
+        setTimeout(() => {
+            if(combo > 0) combo--;
+            comboBonusSpan.innerText = combo;
+        }, 8000);
+    }
+    
+    function enableTask(taskId) {
+        const taskObj = tasks.find(t => t.id === taskId);
+        if(taskObj && taskObj.isLocked === true) {
+            taskObj.isLocked = false;
+            renderTasks();
+            showMsg(`🔓 تم فتح مهمة جديدة: "${taskObj.name}" 🔓`);
         }
     }
-
-    // عند محاولة أي شخص يكتب في console أو يفتح أدوات المطور نعطيه رسالة مزح اضافية
-    console.log("%cوقف 🤚 هذا الموقع للمزح فقط .. رصيدك ما راح يصير حقيقي :)", "color: orange; font-size: 16px;");
     
-    // مكافأة خفيفة مره وحدة ترحيبية للمزح
-    window.addEventListener('load', () => {
-        صندوقالخصاوي = 0;
-        تحديثالواجهة();
-        msgDiv.innerHTML = "💚 أهلاً بالخصاوي .. إضغط على المهمة الأولى ولا تنتظر فلوس حقيقية 💚";
-    });
+    function showMsg(msg) {
+        // نضيف رسالة عائمة بسيطة تنبثق (console + alert اختياري؟ لا نستخدم alert مزعج)
+        // نعمل تنبيه صغير مؤقت
+        let notif = document.createElement('div');
+        notif.innerText = msg;
+        notif.style.position = 'fixed';
+        notif.style.bottom = '20px';
+        notif.style.left = '20px';
+        notif.style.backgroundColor = '#000000aa';
+        notif.style.backdropFilter = 'blur(10px)';
+        notif.style.padding = '12px 20px';
+        notif.style.borderRadius = '40px';
+        notif.style.color = '#ffdd99';
+        notif.style.borderRight = '4px solid gold';
+        notif.style.zIndex = '999';
+        notif.style.fontSize = '0.9rem';
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 2500);
+    }
     
-    taskBtn.addEventListener('click', اضفربالمهمة);
+    function renderTasks() {
+        tasksContainer.innerHTML = '';
+        tasks.forEach(task => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            let lockHtml = '';
+            let btnDisabled = false;
+            let btnText = 'ابدأ المهمة';
+            if(task.isLocked) {
+                btnDisabled = true;
+                btnText = '🔒 مغلق (اكمل سابقه)';
+                lockHtml = '<div style="text-align:center; font-size:0.8rem;">🔒 يتطلب إنجاز المهام السابقة</div>';
+            }
+            // وصف الاضعاف للمهمة الثالثة
+            let extraDesc = '';
+            if(task.id === 3 && !task.isLocked) extraDesc = '<span style="color:#ffaa77;">✨ مضاعفة الرصيد الحالي ✨</span><br>';
+            card.innerHTML = `
+                <div class="task-icon">${task.icon}</div>
+                <div class="task-title">${task.name}</div>
+                <div class="task-desc">${task.desc}</div>
+                ${extraDesc}
+                <div class="reward-hint">💰 ربح تقديري: ${task.id===1?'5-10':(task.id===2?'12-26':'يضاعف رصيدك')} خصاوي</div>
+                ${lockHtml}
+                <button class="${btnDisabled ? 'lock-btn' : ''}" ${btnDisabled ? 'disabled' : ''} data-id="${task.id}">${btnText}</button>
+            `;
+            tasksContainer.appendChild(card);
+            if(!btnDisabled){
+                const btn = card.querySelector('button');
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    tasks.find(t=>t.id===task.id).action();
+                    renderTasks(); // تحديث عداد المهام وفتح التالي
+                });
+            }
+        });
+    }
     
-    // حتى لو حاول المستخدم يغير الرصيد من console .. ما يفرق لانها لعبة وهمية 100%
-    // لكن نحمي شوي عشان المزح (بس الهدف تعليمي بحت)
-    Object.defineProperty(window, 'صندوقالخصاوي', {
-        set: (val) => { 
-            console.log("🃏 حتى لو غيرت الرصيد .. كل شيء وهمي 🃏");
-            صندوقالخصاوي = val;
-            تحديثالواجهة();
-        },
-        get: () => { return صندوقالخصاوي; }
-    });
+    // فتح أول مهمة بشكل تلقائي
+    tasks[0].isLocked = false;
+    renderTasks();
     
+    // سر خفي: إذا وصل الرصيد لـ 300 تظهر رسالة "مقلب مخفي"
+    const originalAdd = addKhasawi;
+    window.addKhasawi = function(amt) {
+        originalAdd(amt);
+        if(kh >= 300 && kh < 310) {
+            showMsg("🤫 مبروك صار عندك 300 خصاوي.. لكن لا يوجد سحب 🤫 هذا الموقع مقلب تقني محد يعرف 💣");
+            setTimeout(() => {
+                showMsg("😂 اضحك مع اخوانك .. كل الأرقام وهمية والفكرة تسلية!");
+            }, 4000);
+        }
+        if(kh >= 1000){
+            showMsg("🏆 أسطورة الخصاوي! لكن تذكر انها لعبة وهمية 🏆");
+        }
+    };
+    
+    // مراقبة الرصيد
+    setInterval(() => {
+        totalSpan.innerText = Math.floor(kh);
+    }, 100);
 </script>
 </body>
 </html>
