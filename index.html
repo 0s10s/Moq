@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خَصاوي - منصة الربح العلالي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* لمنع تحديد النص للمزح */
+        }
+        body {
+            background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
+            font-family: 'Tahoma', 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,245,215,0.95);
+            max-width: 500px;
+            width: 100%;
+            border-radius: 70px 70px 70px 30px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,200,0.6);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+            transition: 0.3s;
+            border: 1px solid #ffd966;
+        }
+        .header {
+            background: #ffb347;
+            background: linear-gradient(135deg, #f9a602, #ff7e05);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #c45100;
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            text-shadow: 2px 2px 0 #b45f1b;
+            color: #fff4e0;
+            letter-spacing: 2px;
+        }
+        .header p {
+            color: #fff0bb;
+            font-weight: bold;
+        }
+        .balance-box {
+            background: #2c2b26;
+            margin: 20px;
+            padding: 15px;
+            border-radius: 60px;
+            text-align: center;
+            color: gold;
+            box-shadow: inset 0 0 8px #00000055, 0 8px 12px rgba(0,0,0,0.2);
+        }
+        .balance-box span {
+            font-size: 2rem;
+            font-weight: bold;
+            background: #00000066;
+            display: inline-block;
+            padding: 5px 25px;
+            border-radius: 40px;
+            letter-spacing: 3px;
+        }
+        .task-area {
+            background: #ecd9b4;
+            margin: 20px;
+            padding: 25px;
+            border-radius: 50px;
+            text-align: center;
+            box-shadow: inset 0 0 0 2px #fff8e7, 0 8px 18px #00000033;
+        }
+        .task-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: #aa6f2e;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 40px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .task-desc {
+            font-size: 1.3rem;
+            background: #ffffdd;
+            padding: 12px;
+            border-radius: 30px;
+            margin: 15px 0;
+            border-right: 8px solid #e67e22;
+        }
+        button {
+            background: #f39c12;
+            border: none;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 60px;
+            color: #2c1c0a;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 0 #b45f1b;
+            font-family: inherit;
+            width: 80%;
+            margin-top: 15px;
+        }
+        button:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #b45f1b;
+        }
+        .message {
+            background: #1e2a1a;
+            margin: 15px 20px;
+            padding: 12px;
+            border-radius: 40px;
+            color: #ffeeaa;
+            text-align: center;
+            font-size: 1rem;
+            border-right: 5px solid #ffc107;
+            transition: 0.3s;
+        }
+        .footer {
+            background: #5a3a1a;
+            padding: 12px;
+            text-align: center;
+            color: #ffeaac;
+            font-size: 0.8rem;
+        }
+        .fake-withdraw {
+            background: #3a2a1f;
+            margin: 0 20px 20px 20px;
+            padding: 8px;
+            border-radius: 30px;
+            color: #bda47a;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h1>💰 خَصاوي 🐫</h1>
+        <p>منصة الربح العلالي المضمونة 100% (للمزح فقط)</p>
+    </div>
+
+    <div class="balance-box">
+        📦 رصيد الخَصاوي الحالي : <span id="balance">0</span> 🪙
+    </div>
+
+    <div class="task-area">
+        <div class="task-title">⚡ المهمة الأولى ⚡</div>
+        <div class="task-desc">
+            🃏 <strong>"العب بمال عمك .. يروح همك!"</strong> 🃏
+            <br>
+            اضغط على الزر .. ولا تسأل وين عمك!
+        </div>
+        <button id="doTaskBtn">🏆 أشتغل عليها 🏆</button>
+    </div>
+
+    <div id="msgBox" class="message">
+        💬 إضغط على الزر لتستلم أرباحك الوهمية ..
+    </div>
+
+    <div class="fake-withdraw">
+        🚫 السحب غير مفعل 🚫 (للمزح التعليمي فقط)
+    </div>
+    <div class="footer">
+        ⚠️ هذا الموقع للمزاح والتعلم .. لا يربح ولا يصرف ولا يضحك عليك حقيقي ⚠️
+    </div>
+</div>
+
+<script>
+    // ********************************************************
+    // سكربت بسيط للمزح — بدون أي تكامل مع محافظ أو خوادم خارجية
+    // كل شيء يتم داخل المتصفح، والرصيد يتغير وهمياً فقط.
+    // ********************************************************
+
+    let صندوقالخصاوي = 0;
+    const balanceSpan = document.getElementById('balance');
+    const msgDiv = document.getElementById('msgBox');
+    const taskBtn = document.getElementById('doTaskBtn');
+
+    // رسائل عشوائية مضحكة تظهر بعد كل ضغطة
+    const رسائلعشوائية = [
+        "🎭 يلا شغلت عمك .. وهمك راح 🎭 (أرباحك صارت 5 خصاوي وهمية)",
+        "🐫 تم إنجاز المهمة .. عمك يقول مبروك بس ما يعطيك 🐫 (حصلت 3 خصاوي)",
+        "😂 اللعب بمال عمك فلة .. بس مافلوس حقيقية 😂 (أضيف 7 خصاوي وهمية)",
+        "🎲 عمك باع الحصان .. ولا أعطاك ريال! (ربح وهمي: 2 خَصاوي)",
+        "🧞‍♂️ يظهر لك خصاوي .. لكن خصاوي أكواد مزحة (++4 خصاوي)",
+        "☕️ تفضل 10 خصاوي زيادة .. بس خصاوي مزح مثل خصاوي عمك",
+        "💸 عمك يضحك معك .. رصيدك الخصاوي زاد (زاد 6 خصاوي)"
+    ];
+
+    // رسائل ساخرة خاصة لما تحاول السحب (المستخدم ممكن يضغط بالغلط لكن مافيه زر سحب حقيقي)
+    function تحديثالواجهة() {
+        balanceSpan.innerText = صندوقالخصاوي;
+    }
+
+    function اضفربالمهمة() {
+        // محاكاة أن المهمة تعطي كميات وهمية بين 1 و 12 خصاوي
+        const ارباحوهمية = Math.floor(Math.random() * 12) + 1;  // من 1 إلى 12
+        صندوقالخصاوي += ارباحوهمية;
+        
+        // اختيار رسالة عشوائية مع وضع المبلغ
+        let رسالةعشوائية = رسائلعشوائية[Math.floor(Math.random() * رسائلعشوائية.length)];
+        // أضيف تفصيل مزح
+        رسالةعشوائية = رسالةعشوائية + ` (مجموع أرباحك الآن ${صندوقالخصاوي} خصاوي وهمية)`;
+        
+        msgDiv.innerHTML = `🎉 ${رسالةعشوائية} 🎉 <br> 🔮 “تعال باكر .. بكرة تستلم فلوسك” 🔮 لكن أكيد بكرة نفس الحكاية 🤡`;
+        
+        // تأثير بصري سريع
+        taskBtn.style.transform = 'scale(0.97)';
+        setTimeout(() => { taskBtn.style.transform = ''; }, 120);
+        
+        تحديثالواجهة();
+        
+        // كل 5 مهام نضيف رسالة استهبال انه بكرة ماكو شي
+        if(صندوقالخصاوي % 15 === 0 && صندوقالخصاوي > 0) {
+            msgDiv.innerHTML = `😭 ${msgDiv.innerHTML} <br> ⚠️ مهما زاد رصيدك .. ماكو سحب ههههه ⚠️`;
+        }
+    }
+
+    // عند محاولة أي شخص يكتب في console أو يفتح أدوات المطور نعطيه رسالة مزح اضافية
+    console.log("%cوقف 🤚 هذا الموقع للمزح فقط .. رصيدك ما راح يصير حقيقي :)", "color: orange; font-size: 16px;");
+    
+    // مكافأة خفيفة مره وحدة ترحيبية للمزح
+    window.addEventListener('load', () => {
+        صندوقالخصاوي = 0;
+        تحديثالواجهة();
+        msgDiv.innerHTML = "💚 أهلاً بالخصاوي .. إضغط على المهمة الأولى ولا تنتظر فلوس حقيقية 💚";
+    });
+    
+    taskBtn.addEventListener('click', اضفربالمهمة);
+    
+    // حتى لو حاول المستخدم يغير الرصيد من console .. ما يفرق لانها لعبة وهمية 100%
+    // لكن نحمي شوي عشان المزح (بس الهدف تعليمي بحت)
+    Object.defineProperty(window, 'صندوقالخصاوي', {
+        set: (val) => { 
+            console.log("🃏 حتى لو غيرت الرصيد .. كل شيء وهمي 🃏");
+            صندوقالخصاوي = val;
+            تحديثالواجهة();
+        },
+        get: () => { return صندوقالخصاوي; }
+    });
+    
+</script>
+</body>
+</html>
