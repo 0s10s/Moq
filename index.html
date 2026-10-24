@@ -2,385 +2,1367 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاذاة زرق الكانيولا | اللعبة التعليمية الفضائية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>محاكي زرق الكانيولا الفضائي | Space IV Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-dark: #030712;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+            --cyan: #38bdf8;
+            --purple: #818cf8;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
-            background-color: #030712;
+            background-color: var(--bg-dark);
             color: #f8fafc;
             min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        /* خلفية الفضاء */
+        #starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 30%, #0f172a 0%, #020617 100%);
+        }
+
+        /* شاشة التحميل الفضائية */
+        #loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: #020617;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s;
         }
 
-        #space-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        .loader-ring {
+            width: 90px;
+            height: 90px;
+            border: 4px solid rgba(56, 189, 248, 0.15);
+            border-top: 4px solid var(--cyan);
+            border-right: 4px solid var(--purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+        }
+
+        .progress-bar-wrap {
+            width: 280px;
+            height: 8px;
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .progress-bar-fill {
             height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+            width: 0%;
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            transition: width 0.2s ease;
         }
 
-        .game-container {
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* الحاوية الرئيسية للمحاكي */
+        .sim-wrapper {
             width: 100%;
-            max-width: 650px;
-            background: rgba(15, 23, 42, 0.85);
+            max-width: 920px;
+            background: var(--panel-bg);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(56, 189, 248, 0.3);
             border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            text-align: center;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
             position: relative;
-            z-index: 2;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            color: #38bdf8;
-            margin-bottom: 10px;
-            font-weight: 900;
+        /* شريط المراقبة الحيوية العلوي HUD */
+        .hud-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            background: rgba(2, 6, 23, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 15px;
         }
 
-        p.subtitle {
-            color: #94a3b8;
-            font-size: 0.95rem;
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2px 8px;
+        }
+        .hud-item:last-child { border-left: none; }
+
+        .hud-label { font-size: 0.75rem; color: #94a3b8; }
+        .hud-val { font-size: 1.1rem; font-weight: 900; color: var(--cyan); }
+
+        /* صندوق الملاحظات السريرية المستمرة */
+        .clinical-mentor {
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.08));
+            border-right: 4px solid var(--cyan);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 64px;
+            transition: all 0.3s ease;
+        }
+
+        .mentor-icon {
+            font-size: 1.6rem;
+            background: rgba(56, 189, 248, 0.15);
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .mentor-text {
+            font-size: 0.92rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        /* شاشات التبديل */
+        .view-panel { display: none; }
+        .view-panel.active { display: block; }
+
+        /* شاشة البداية واختيار الكانيولا */
+        .setup-card {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .name-input {
+            width: 100%;
+            max-width: 380px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            background: rgba(15, 23, 42, 0.9);
+            color: #fff;
+            font-size: 1.05rem;
+            text-align: center;
+            outline: none;
+            margin: 15px 0 25px;
+        }
+        .name-input:focus { border-color: var(--cyan); box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+
+        .gauge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
             margin-bottom: 25px;
         }
 
-        /* شاشات اللعبة */
-        .screen {
-            display: none;
-        }
-        .screen.active {
-            display: block;
-        }
-
-        /* حقل ادخال الاسم */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 80%;
-            padding: 12px 20px;
-            border-radius: 50px;
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            background: rgba(30, 41, 59, 0.8);
-            color: #fff;
-            font-size: 1.1rem;
+        .gauge-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
             text-align: center;
-            outline: none;
-            transition: all 0.3s;
         }
 
-        input[type="text"]:focus {
-            border-color: #38bdf8;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        .gauge-card.selected {
+            transform: translateY(-4px);
+            border-color: var(--cyan);
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.25);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .gauge-color-dot {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            border: 2px solid #fff;
+        }
+
+        /* منطقة اللعب التفاعلية Canvas */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            background: #020617;
+            border-radius: 18px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #simCanvas {
+            width: 100%;
+            height: 430px;
+            display: block;
+            cursor: crosshair;
+        }
+
+        /* أزرار التحكم السفلية داخل المراحل */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
-            color: #030712;
+            background: linear-gradient(135deg, var(--cyan), #2563eb);
+            color: #020617;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 24px;
             border-radius: 50px;
-            font-size: 1.05rem;
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+            transition: all 0.25s;
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
         }
+        .btn:hover:not(:disabled) { transform: scale(1.04); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 25px rgba(56, 189, 248, 0.6);
-        }
-
-        /* صندوق الملاحظات التوضيحية المستمرة */
-        .tips-box {
-            background: rgba(56, 189, 248, 0.1);
-            border-right: 4px solid #38bdf8;
-            padding: 12px 18px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: right;
-            font-size: 0.9rem;
+        .btn-outline {
+            background: rgba(30, 41, 59, 0.8);
             color: #e2e8f0;
-            animation: pulseTip 2s infinite;
-        }
-
-        @keyframes pulseTip {
-            0% { border-color: #38bdf8; }
-            50% { border-color: #818cf8; }
-            100% { border-color: #38bdf8; }
-        }
-
-        /* منطقة التحدي والخيارات الطبية */
-        .question-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #f1f5f9;
-            margin-bottom: 20px;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .option-btn {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 14px;
-            border-radius: 14px;
-            color: #cbd5e1;
-            font-size: 1rem;
+            border: 1px solid var(--cyan);
+            padding: 8px 16px;
+            border-radius: 50px;
             cursor: pointer;
-            text-align: right;
-            transition: all 0.3s;
-        }
-
-        .option-btn:hover {
-            background: rgba(56, 189, 248, 0.2);
-            border-color: #38bdf8;
-            color: #fff;
-            transform: translateX(-5px);
-        }
-
-        /* لوحة الشرف */
-        .leaderboard-list {
-            list-style: none;
-            max-height: 220px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        .leaderboard-item {
-            background: rgba(30, 41, 59, 0.6);
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .score-badge {
-            background: #38bdf8;
-            color: #030712;
-            padding: 3px 10px;
-            border-radius: 20px;
             font-weight: 700;
-            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-outline.active-toggle {
+            background: var(--green);
+            color: #020617;
+            border-color: var(--green);
+        }
+
+        input[type="range"] {
+            accent-color: var(--cyan);
+            width: 150px;
+            cursor: pointer;
+        }
+
+        /* لوحة الشرف والتقرير */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .report-box {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.92rem;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 10px 12px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .leaderboard-table th { color: var(--cyan); background: rgba(2, 6, 23, 0.6); }
+        .rank-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 800;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--cyan);
+        }
+
+        @media (max-width: 600px) {
+            #simCanvas { height: 350px; }
+            .controls-bar { flex-direction: column; align-items: stretch; text-align: center; }
+            .control-group { justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="space-canvas"></canvas>
+    <!-- خلفية النجوم -->
+    <canvas id="starfield"></canvas>
 
-    <div class="game-container">
-        
-        <!-- الشاشة الأولى: تسجيل الاسم -->
-        <div id="screen-start" class="screen active">
-            <h1>محاكاة زرق الكانيولا الطبية 💉</h1>
-            <p class="subtitle">اختبر مهاراتك الإكلينيكية واجمع النقاط في بيئة الفضاء الأكاديمي</p>
-            
-            <div class="input-group">
-                <input type="text" id="player-name" placeholder="أدخل اسمك الباحث الكريم..." autocomplete="off">
+    <!-- شاشة التحميل المبدئية -->
+    <div id="loader-overlay">
+        <div class="loader-ring"></div>
+        <h2 style="color: #38bdf8; margin-bottom: 6px;">جاري تهيئة غرفة العمليات الفضائية...</h2>
+        <p id="loader-status" style="color: #94a3b8; font-size: 0.9rem;">تحميل الأنسجة الوعائية والمستشعرات الحيوية</p>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="loader-bar"></div>
+        </div>
+    </div>
+
+    <div class="sim-wrapper">
+        <!-- شريط المراقبة الحيوية HUD -->
+        <div class="hud-bar">
+            <div class="hud-item">
+                <span class="hud-label">الباحث الممارس</span>
+                <span class="hud-val" id="hud-name">---</span>
             </div>
-            <button class="btn" onclick="startGame()">ابدأ التحدي 🚀</button>
+            <div class="hud-item">
+                <span class="hud-label">المرحلة السريرية</span>
+                <span class="hud-val" id="hud-stage">التحضير</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">زمن التورنيكيه</span>
+                <span class="hud-val" id="hud-tourniquet" style="color:#f59e0b;">00:00</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">نبض المريضة (HR)</span>
+                <span class="hud-val" id="hud-bpm" style="color:#22c55e;">♥ 78 BPM</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">مجموع النقاط</span>
+                <span class="hud-val" id="hud-score">0</span>
+            </div>
         </div>
 
-        <!-- الشاشة الثانية: اللعبة والأسئلة التفاعلية -->
-        <div id="screen-game" class="screen">
-            <div class="tips-box" id="educational-tip">
-                💡 <strong>ملاحظة تعليمية:</strong> جاري تحميل التوجيهات الطبية...
+        <!-- صندوق الموجه السريري التوضيحي المستمر -->
+        <div class="clinical-mentor" id="mentor-box">
+            <div class="mentor-icon" id="mentor-icon">🩺</div>
+            <div class="mentor-text" id="mentor-text">
+                <strong>الموجه السريري الفضائي:</strong> مرحباً بك في محاكي زرق الكانيولا لمريضات العمليات القيصرية. سجل اسمك واختر قياس الكانيولا الأنسب للبدء.
             </div>
-
-            <div class="question-title" id="q-title">السؤال الأول...</div>
-            <div class="options-grid" id="q-options">
-                <!-- الخيارات تتولد ديناميكياً -->
-            </div>
-            <div style="color: #38bdf8; font-weight: bold; font-size: 1.1rem;">النقاط الحالية: <span id="current-score">0</span></div>
         </div>
 
-        <!-- الشاشة الثالثة: النتائج ولوحة الشرف -->
-        <div id="screen-end" class="screen">
-            <h1>🎉 أتممت المهمة بنجاح!</h1>
-            <p class="subtitle">لقد أنهيت محاكاة زرق الكانيولا بجدارة.</p>
-            
-            <h3 style="color: #38bdf8; margin-bottom: 10px;">🏆 لوحة الشرف الفضائية</h3>
-            <ul class="leaderboard-list" id="leaderboard">
-                <!-- يتم جلب البيانات هنا -->
-            </ul>
+        <!-- الشاشة 1: التسجيل واختيار قياس الكانيولا -->
+        <div id="view-setup" class="view-panel active">
+            <div class="setup-card">
+                <h2 style="color: #f8fafc; margin-bottom: 8px;">بروتوكول تحضير القسطرة الوريدية (IV Cannulation)</h2>
+                <p style="color: #94a3b8; font-size: 0.95rem;">الحالة السريرية: مريضة تستعد لعملية قيصرية وتحتاج خطاً وريدياً آمناً لإعطاء السوائل والأدوية المضادة للغثيان.</p>
 
-            <button class="btn" onclick="location.reload()">إعادة المحاولة 🔄</button>
+                <input type="text" id="player-name-input" class="name-input" placeholder="أدخل اسمك الثلاثي أو اللقب العلمي..." autocomplete="off">
+
+                <h3 style="color: #38bdf8; margin-bottom: 12px; font-size: 1.05rem;">اختر قياس الكانيولا (Cannula Gauge) المناسب للحالة:</h3>
+                <div class="gauge-grid">
+                    <div class="gauge-card selected" onclick="selectGauge(18, this)">
+                        <div class="gauge-color-dot" style="background: #22c55e;"></div>
+                        <h4>18G (خضراء)</h4>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">تدفق عالٍ (90 مل/دقيقة) - مثالية للعمليات القيصرية ونقل الدم</p>
+                    </div>
+                    <div class="gauge-card" onclick="selectGauge(20, this)">
+                        <div class="gauge-color-dot" style="background: #ec4899;"></div>
+                        <h4>20G (وردية)</h4>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">تدفق متوسط (60 مل/دقيقة) - مناسبة للسوائل الروتينية</p>
+                    </div>
+                    <div class="gauge-card" onclick="selectGauge(22, this)">
+                        <div class="gauge-color-dot" style="background: #3b82f6;"></div>
+                        <h4>22G (زرقاء)</h4>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">تدفق بطيء (36 مل/دقيقة) - للأوردة الدقيقة جداً</p>
+                    </div>
+                    <div class="gauge-card" onclick="selectGauge(24, this)">
+                        <div class="gauge-color-dot" style="background: #eab308;"></div>
+                        <h4>24G (صفراء)</h4>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">تدفق ضعيف (20 مل/دقيقة) - مخصصة للأطفال والرضع</p>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="startSimulation()">دخول غرفة العمليات وبدء التطبيق 💉</button>
+            </div>
         </div>
 
+        <!-- الشاشة 2: المحاكي البصري التفاعلي -->
+        <div id="view-sim" class="view-panel">
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="860" height="430"></canvas>
+            </div>
+
+            <!-- شريط أدوات المرحلة الديناميكي -->
+            <div class="controls-bar" id="stage-controls">
+                <!-- يتغير محتواه تلقائياً حسب المرحلة -->
+            </div>
+        </div>
+
+        <!-- الشاشة 3: التقرير الطبي ولوحة الشرف -->
+        <div id="view-results" class="view-panel">
+            <div style="text-align: center; padding: 10px;">
+                <h2 style="color: #38bdf8; font-size: 1.8rem;">🏆 التقرير الإكلينيكي ولوحة الشرف</h2>
+                <p id="sync-status-msg" style="color: #22c55e; font-size: 0.9rem; margin-top: 5px;">تم توثيق نتيجتك في السجل الأكاديمي بنجاح!</p>
+
+                <div class="report-grid" id="score-breakdown"></div>
+
+                <div style="background: rgba(2, 6, 23, 0.65); border-radius: 16px; padding: 16px; margin-top: 20px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <h3 style="color: #f8fafc;">🌟 لوحة شرف أبطال زرق الكانيولا</h3>
+                        <button class="btn-outline" onclick="exportDatabaseJSON()" style="font-size:0.8rem;">📥 تحميل ملف الداتابيس (leaderboard.json)</button>
+                    </div>
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>المركز</th>
+                                <th>اسم الباحث</th>
+                                <th>قياس الكانيولا</th>
+                                <th>التقييم الطبي</th>
+                                <th>النقاط</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body"></tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn" onclick="location.reload()">ممارس جديد / إعادة المحاكاة 🔄</button>
+                    <a href="index.html" class="btn-outline" style="text-decoration:none; display:inline-flex; align-items:center;">العودة لصفحة فريق البحث 🚀</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // خلفية الفضاء المتحركة
-        const canvas = document.getElementById('space-canvas');
-        const ctx = canvas.getContext('2d');
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
+        /* =====================================================================
+           إعدادات ربط قاعدة البيانات وإشعارات الباحث الرئيسي (مقتدى علي)
+           ===================================================================== */
+        const CLOUD_CONFIG = {
+            // 1. لإرسال اسم ونقاط كل لاعب فوراً إلى حسابك في تيليجرام (اختياري):
+            // ضع توكن البوت والـ Chat ID الخاص بك هنا ليصلك إشعار فوري بكل طالب يلعب!
+            TELEGRAM_BOT_TOKEN: "", 
+            TELEGRAM_CHAT_ID: "",
+            
+            // 2. أو رابط Google Apps Script Web App لحفظ النتائج في ملف Google Sheet ومشاركتها للجميع:
+            GOOGLE_SHEET_WEBHOOK_URL: "",
 
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+            // 3. مسار ملف JSON داخل مشروع GitHub لقراءة البيانات الأولية:
+            GITHUB_JSON_PATH: "leaderboard.json"
+        };
+
+        /* =====================================================================
+           محرك المؤثرات الصوتية المدمج (Web Audio API Synthesizer)
+           ===================================================================== */
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+            }
+            playTone(freq = 440, type = 'sine', duration = 0.12, vol = 0.12) {
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            }
+            success() {
+                this.playTone(587.33, 'sine', 0.12, 0.15);
+                setTimeout(() => this.playTone(880, 'sine', 0.25, 0.18), 110);
+            }
+            warn() {
+                this.playTone(220, 'sawtooth', 0.22, 0.15);
+            }
+            flashback() {
+                this.playTone(523.25, 'triangle', 0.1, 0.2);
+                setTimeout(() => this.playTone(659.25, 'triangle', 0.1, 0.2), 90);
+                setTimeout(() => this.playTone(1046.5, 'sine', 0.35, 0.22), 180);
+            }
+        }
+        const sfx = new SoundEngine();
+
+        /* =====================================================================
+           تهيئة شاشة التحميل وخلفية النجوم
+           ===================================================================== */
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('loader-bar');
+            const status = document.getElementById('loader-status');
+            const steps = [
+                { p: 30, t: "معايرة خريطة الأوردة السطحية والشبكة الظهرية..." },
+                { p: 65, t: "تجهيز مستشعرات زاوية البزل وضغط التورنيكيه..." },
+                { p: 90, t: "الاتصال بسجل لوحة الشرف الأكاديمية..." },
+                { p: 100, t: "اكتمل التحميل! أهلاً بك في المختبر الفضائي." }
+            ];
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    bar.style.width = steps[i].p + "%";
+                    status.innerText = steps[i].t;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        const ov = document.getElementById('loader-overlay');
+                        ov.style.opacity = "0";
+                        ov.style.visibility = "hidden";
+                    }, 300);
+                }
+            }, 320);
         });
 
-        const stars = Array.from({ length: 120 }, () => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            radius: Math.random() * 1.5,
-            alpha: Math.random(),
-            speed: Math.random() * 0.15 + 0.05
-        }));
-
-        function animateSpace() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#ffffff';
-            stars.forEach(star => {
-                ctx.globalAlpha = star.alpha;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fill();
-                star.y -= star.speed;
-                if (star.y < 0) star.y = height;
-            });
-            requestAnimationFrame(animateSpace);
+        // خلفية النجوم
+        const starCanvas = document.getElementById('starfield');
+        const sCtx = starCanvas.getContext('2d');
+        function resizeStars() {
+            starCanvas.width = window.innerWidth;
+            starCanvas.height = window.innerHeight;
         }
-        animateSpace();
+        window.addEventListener('resize', resizeStars);
+        resizeStars();
+        const stars = Array.from({ length: 110 }, () => ({
+            x: Math.random() * starCanvas.width,
+            y: Math.random() * starCanvas.height,
+            r: Math.random() * 1.5 + 0.3,
+            s: Math.random() * 0.25 + 0.05
+        }));
+        function drawStars() {
+            sCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+            sCtx.fillStyle = "#fff";
+            stars.forEach(st => {
+                sCtx.beginPath();
+                sCtx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+                sCtx.fill();
+                st.y -= st.s;
+                if (st.y < 0) st.y = starCanvas.height;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
 
-        // منطق اللعبة
-        let playerName = "";
-        let score = 0;
-        let currentQuestion = 0;
+        /* =====================================================================
+           حالة اللعبة والمراحل السريرية (Game State)
+           ===================================================================== */
+        const state = {
+            playerName: "",
+            gauge: 18,
+            stage: 0, // 1: Vein & Tourniquet, 2: Swab, 3: Puncture, 4: Advance & Tourniquet Release, 5: Flush
+            score: 0,
+            breakdown: {
+                gaugeScore: 0,
+                veinScore: 0,
+                sterileScore: 0,
+                angleScore: 0,
+                advanceScore: 0
+            },
+            tourniquetApplied: false,
+            tourniquetY: 120,
+            tourniquetSeconds: 0,
+            tourniquetTimerId: null,
+            hoveredVein: null,
+            selectedVein: null,
+            swabProgress: 0,
+            swabX: 430,
+            swabY: 220,
+            isPointerDown: false,
+            insertionAngle: 22,
+            bevelUp: true,
+            needleDepth: 0, // 0 to 100
+            flashbackAchieved: false,
+            posteriorPunctured: false,
+            catheterAdvanced: 0, // 0 to 100
+            styletRetracted: 0,  // 0 to 100
+            salineFlushed: 0     // 0 to 100
+        };
 
-        const questions = [
+        // تعريف الأوردة والشرايين على الذراع في المرحلة 1
+        const anatomicalVessels = [
             {
-                tip: "تأكد دائماً من تعقيم مكان الإدخال بحركة دائرية من المركز إلى الخارج لمدة لا تقل عن 30 ثانية.",
-                title: "ما هي أفضل زاوية لإدخال الإبرة (الكانيولا) في الوريد الظهري لليد؟",
-                options: [
-                    { text: "زاوية 15 إلى 30 درجة مع اتجاه الوريد", correct: true, pts: 20 },
-                    { text: "زاوية قائمة 90 درجة تماماً", correct: false, pts: 0 },
-                    { text: "زاوية أفقية تماماً 0 درجة موازية للجلد", correct: false, pts: 5 }
-                ]
+                id: 'cephalic',
+                name: 'الوريد الكعبري الساعدي (Cephalic Forearm Vein)',
+                type: 'vein',
+                quality: 'مثالي جداً: مستقيم، واضح، مرن، وبعيد عن المفاصل',
+                points: 200,
+                color: 'rgba(37, 99, 235, 0.78)',
+                path: [{x: 340, y: 150}, {x: 355, y: 230}, {x: 370, y: 310}, {x: 380, y: 375}]
             },
             {
-                tip: "ربط التورنيكيه (Tourniquet) يجب ألا يتجاوز دقيقة إلى دقيقتين لمنع احتقان الدم وتلف الأنسجة.",
-                title: "أين يجب ربط التورنيكيه بالنسبة لموقع البزل المقترح؟",
-                options: [
-                    { text: "أعلى مكان البزل بحوالي 7 إلى 10 سم", correct: true, pts: 20 },
-                    { text: "تحت مكان البزل مباشرة", correct: false, pts: 0 },
-                    { text: "حول المعصم بغض النظر عن الوريد", correct: false, pts: 5 }
-                ]
+                id: 'median',
+                name: 'الوريد الساعدي الأوسط (Median Antebrachial Vein)',
+                type: 'vein',
+                quality: 'جيد جداً: مستقيم ويسهل تثبيت الكانيولا فوقه',
+                points: 175,
+                color: 'rgba(29, 78, 216, 0.72)',
+                path: [{x: 435, y: 155}, {x: 440, y: 240}, {x: 445, y: 325}, {x: 450, y: 380}]
             },
             {
-                tip: "ظهور عودة الدم (Flashback) في حجرة الكانيولا يؤكد نجاح الدخول داخل تجويف الوريد.",
-                title: "ما هو التصرف الفوري الصحيح بمجرد رؤية تدفق الدم في غرفة الكانيولا؟",
-                options: [
-                    { text: "خفض زاوية الإدخال قليلاً ودفع القسطرة البلاستيكية للأمام وسحب الإبرة المعدنية", correct: true, pts: 30 },
-                    { text: "دفع الإبرة المعدنية بشكل كامل وسريع للداخل", correct: false, pts: 0 },
-                    { text: "سحب الكانيولا بالكامل فوراً", correct: false, pts: 0 }
-                ]
+                id: 'tortuous',
+                name: 'وريد متعرج فوق مفصل الرسغ يحتوي صمامات',
+                type: 'valve_vein',
+                quality: 'غير محبذ: متعرج وقريب من مفصل الرسغ (خطر انسداد وتسرب السوائل)',
+                points: 70,
+                color: 'rgba(59, 130, 246, 0.65)',
+                path: [{x: 505, y: 170}, {x: 490, y: 230}, {x: 525, y: 290}, {x: 500, y: 360}]
             },
             {
-                tip: "تجنب الأوردة الموجودة بالقرب من المفاصل أو الصمامات لتفادي تسرب السوائل أو الألم المزمن للمريضة.",
-                title: "عند اختيار الوريد لعمليات القيصرية، ما هي الأوردة الأفضل تفضيلاً بالبداية؟",
-                options: [
-                    { text: "أوردة ظهر اليد والساعد (Dorsal & Forearm veins)", correct: true, pts: 30 },
-                    { text: "أوردة منطقة الرقبة الظاهرة", correct: false, pts: 0 },
-                    { text: "الأوردة المجاورة للشرايين مباشرة", correct: false, pts: 0 }
-                ]
+                id: 'artery',
+                name: 'منطقة الشريان الكعبري النابض (Radial Artery - خطر!)',
+                type: 'artery',
+                quality: 'خطر سريري! هذا شريان نابض وليس وريداً — يُمنع البزل هنا بتاتاً',
+                points: -50,
+                color: 'rgba(220, 38, 38, 0.75)',
+                path: [{x: 310, y: 260}, {x: 318, y: 325}, {x: 325, y: 385}]
             }
         ];
 
-        function startGame() {
-            const input = document.getElementById('player-name');
-            if (!input.value.trim()) {
-                alert("يرجى كتابة اسمك الكريم أولاً لبدء التحدي!");
+        function setMentor(icon, htmlText, borderColor = '#38bdf8') {
+            document.getElementById('mentor-icon').innerText = icon;
+            document.getElementById('mentor-text').innerHTML = htmlText;
+            document.getElementById('mentor-box').style.borderRightColor = borderColor;
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-score').innerText = Math.max(0, Math.round(state.score));
+            const mins = String(Math.floor(state.tourniquetSeconds / 60)).padStart(2, '0');
+            const secs = String(state.tourniquetSeconds % 60).padStart(2, '0');
+            const tEl = document.getElementById('hud-tourniquet');
+            tEl.innerText = `${mins}:${secs}`;
+            tEl.style.color = state.tourniquetSeconds > 60 ? '#ef4444' : (state.tourniquetApplied ? '#22c55e' : '#f59e0b');
+        }
+
+        function selectGauge(g, cardEl) {
+            sfx.playTone(500, 'sine', 0.08);
+            state.gauge = g;
+            document.querySelectorAll('.gauge-card').forEach(c => c.classList.remove('selected'));
+            cardEl.classList.add('selected');
+
+            if (g === 18) {
+                setMentor('✅', '<strong>اختيار ممتاز (18G الخضراء):</strong> هي الخيار الذهبي لمريضات العمليات القيصرية لأنها تسمح بتعويض السوائل السريع ونقل الدم عند الطوارئ.', '#22c55e');
+            } else if (g === 20) {
+                setMentor('👍', '<strong>اختيار مقبول (20G الوردية):</strong> مناسبة لإعطاء السوائل والأدوية الوريدية، لكن 18G تظل الأفضل تحسباً لأي نزف أثناء القيصرية.', '#38bdf8');
+            } else {
+                setMentor('⚠️', `<strong>تنبيه سريري (${g}G):</strong> هذا القياس صغير وبطيء التدفق ولا يُنصح به كخط وريدي أساسي في العمليات القيصرية.`, '#f59e0b');
+            }
+        }
+
+        function startSimulation() {
+            const nameVal = document.getElementById('player-name-input').value.trim();
+            if (!nameVal) {
+                sfx.warn();
+                setMentor('❗', '<strong>يرجى كتابة اسمك أولاً</strong> حتى يتم تسجيلك في لوحة الشرف وإرسال نتيجتك للسجل الأكاديمي.', '#ef4444');
+                document.getElementById('player-name-input').focus();
                 return;
             }
-            playerName = input.value.trim();
-            document.getElementById('screen-start').classList.remove('active');
-            document.getElementById('screen-game').classList.add('active');
-            loadQuestion();
+            state.playerName = nameVal;
+            document.getElementById('hud-name').innerText = nameVal;
+
+            // احتساب نقاط اختيار قياس الكانيولا
+            const gaugeScores = { 18: 200, 20: 150, 22: 75, 24: 30 };
+            state.breakdown.gaugeScore = gaugeScores[state.gauge] || 100;
+            state.score += state.breakdown.gaugeScore;
+            updateHUD();
+
+            document.getElementById('view-setup').classList.remove('active');
+            document.getElementById('view-sim').classList.add('active');
+            sfx.success();
+            enterStage(1);
         }
 
-        function loadQuestion() {
-            if (currentQuestion >= questions.length) {
-                endGame();
-                return;
+        /* =====================================================================
+           إدارة المراحل التفاعلية الخمسة
+           ===================================================================== */
+        function enterStage(stageNum) {
+            state.stage = stageNum;
+            const ctrl = document.getElementById('stage-controls');
+
+            if (stageNum === 1) {
+                document.getElementById('hud-stage').innerText = "1/5 الفحص والتورنيكيه";
+                setMentor('🔍', '<strong>المرحلة 1 (التورنيكيه واختيار الوريد):</strong> أولاً اضغط زر <b>"ربط التورنيكيه"</b> لإبراز الأوردة، ثم مرر إصبعك أو الماوس على ذراع المريضة لجسّ الأوردة واضغط على الوريد الأفضل للبزل.');
+                ctrl.innerHTML = `
+                    <div class="control-group">
+                        <button class="btn-outline" id="btn-tourniquet" onclick="toggleTourniquet()">🎗️ ربط التورنيكيه (7-10 سم أعلى الموقع)</button>
+                        <span id="selected-vein-label" style="color:#94a3b8; font-size:0.9rem;">الوريد المحدد: لم يتم الاختيار بعد</span>
+                    </div>
+                    <button class="btn" id="btn-stage1-next" disabled onclick="confirmVeinStage()">تأكيد الوريد والانتقال للتعقيم ⬅️</button>
+                `;
+            } 
+            else if (stageNum === 2) {
+                document.getElementById('hud-stage').innerText = "2/5 التعقيم الحلزوني";
+                setMentor('🧼', '<strong>المرحلة 2 (التعقيم بمسحة الكحول 70%):</strong> اسحب مسحة الكحول فوق دائرة الوريد بحركة دائرية/حلزونية من المركز للخارج حتى يصل مؤشر التعقيم إلى <b>100%</b>.');
+                ctrl.innerHTML = `
+                    <div class="control-group">
+                        <span style="color:#38bdf8; font-weight:bold;">كفاءة التعقيم الحلزوني: <span id="swab-pct">0%</span></span>
+                    </div>
+                    <button class="btn" id="btn-stage2-next" disabled onclick="enterStage(3)">ترك الكحول يجف والبدء بالبزل ⬅️</button>
+                `;
+            }
+            else if (stageNum === 3) {
+                document.getElementById('hud-stage').innerText = "3/5 زاوية البزل والـ Flashback";
+                setMentor('📐', '<strong>المرحلة 3 (البزل ومراقبة ومضة الدم):</strong> اضبط زاوية الإبرة بين <b>15° و 30°</b> وتأكد أن شطفة الإبرة للأعلى (<b>Bevel Up</b>)، ثم اسحب شريط <b>دفع الإبرة</b> ببطء حتى ترى ومضة الدم (Flashback) وتوقف فوراً!');
+                ctrl.innerHTML = `
+                    <div class="control-group">
+                        <label style="font-size:0.9rem;">زاوية الإدخال: <strong id="angle-val" style="color:#38bdf8;">22°</strong></label>
+                        <input type="range" min="5" max="60" value="22" oninput="updateAngle(this.value)">
+                        <button class="btn-outline active-toggle" id="btn-bevel" onclick="toggleBevel()">شطفة الإبرة للأعلى (Bevel Up) ✔</button>
+                    </div>
+                    <div class="control-group">
+                        <label style="font-size:0.9rem;">دفع الإبرة بالوريد:</label>
+                        <input type="range" min="0" max="100" value="0" id="needle-slider" oninput="updateNeedleDepth(this.value)">
+                        <button class="btn" id="btn-stage3-next" disabled onclick="confirmFlashbackStage()">تثبيت مكان الـ Flashback ⬅️</button>
+                    </div>
+                `;
+            }
+            else if (stageNum === 4) {
+                document.getElementById('hud-stage').innerText = "4/5 تزحيف القسطرة وفك التورنيكيه";
+                state.insertionAngle = 10;
+                setMentor('⚡', '<strong>المرحلة 4 (تزحيف القسطرة البلاستيكية):</strong> بعد ظهور الدم، اخفض الزاوية وادفع <b>القسطرة البلاستيكية</b> بالكامل داخل الوريد مع سحب الإبرة المعدنية، ولا تنسَ <b>فك التورنيكيه</b> قبل الانتقال!');
+                ctrl.innerHTML = `
+                    <div class="control-group">
+                        <label style="font-size:0.88rem;">تزحيف القسطرة البلاستيكية وسحب الإبرة:</label>
+                        <input type="range" min="0" max="100" value="0" oninput="updateCatheterAdvance(this.value)">
+                        <button class="btn-outline" id="btn-release-tourniquet" onclick="releaseTourniquetStage4()">🔓 فك التورنيكيه الآن</button>
+                    </div>
+                    <button class="btn" id="btn-stage4-next" disabled onclick="enterStage(5)">الانتقال للتثبيت والفحص الملحي ⬅️</button>
+                `;
+            }
+            else if (stageNum === 5) {
+                document.getElementById('hud-stage').innerText = "5/5 الفحص بالمحلول والتثبيت";
+                setMentor('💧', '<strong>المرحلة 5 (اختبار النفاذية Saline Flush):</strong> ادفع مكبس المحلول الملحي (0.9% NaCl) للتأكد من سريان السائل بسلاسة داخل الوريد دون انتفاخ أو تسرب تحت الجلد.');
+                ctrl.innerHTML = `
+                    <div class="control-group">
+                        <label style="font-size:0.9rem;">دفع المحلول الملحي (Saline Flush):</label>
+                        <input type="range" min="0" max="100" value="0" oninput="updateSalineFlush(this.value)">
+                    </div>
+                    <button class="btn" id="btn-finish-sim" disabled onclick="finishSimulation()">إنهاء العملية وعرض لوحة الشرف 🏆</button>
+                `;
+            }
+        }
+
+        /* =====================================================================
+           تفاعلات المراحل والمنطق السريري
+           ===================================================================== */
+        function toggleTourniquet() {
+            if (!state.tourniquetApplied) {
+                state.tourniquetApplied = true;
+                sfx.playTone(620, 'sine', 0.12);
+                document.getElementById('btn-tourniquet').classList.add('active-toggle');
+                document.getElementById('btn-tourniquet').innerText = "🎗️ التورنيكيه مربوطة (الأوردة ممتلئة)";
+                setMentor('⏱️', '<strong>تم ربط التورنيكيه بنجاح!</strong> لاحظ كيف امتلأت الأوردة وأصبحت أكثر وضوحاً. اضغط الآن على الوريد المستقيم الأفضل على الذراع قبل مرور 60 ثانية.', '#22c55e');
+                
+                if (!state.tourniquetTimerId) {
+                    state.tourniquetTimerId = setInterval(() => {
+                        if (state.tourniquetApplied) {
+                            state.tourniquetSeconds++;
+                            if (state.tourniquetSeconds === 60) {
+                                sfx.warn();
+                                setMentor('⚠️', '<strong>تحذير زمن التورنيكيه!</strong> تجاوزت التورنيكيه 60 ثانية؛ استمرار ربطها يسبب ركوداً دموياً وتغير القيم المختبرية.', '#ef4444');
+                            }
+                            updateHUD();
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        function confirmVeinStage() {
+            if (!state.selectedVein) return;
+            let pts = state.selectedVein.points;
+            if (!state.tourniquetApplied) {
+                pts -= 60;
+                setMentor('⚠️', 'لقد اخترت الوريد دون ربط التورنيكيه أولاً! تم خصم 60 نقطة لعدم إبراز الوريد.', '#f59e0b');
+            }
+            state.breakdown.veinScore = Math.max(0, pts);
+            state.score += state.breakdown.veinScore;
+            updateHUD();
+            sfx.success();
+            enterStage(2);
+        }
+
+        function updateAngle(val) {
+            state.insertionAngle = Number(val);
+            document.getElementById('angle-val').innerText = val + "°";
+            if (state.insertionAngle >= 15 && state.insertionAngle <= 30) {
+                setMentor('✅', `<strong>زاوية مثالية (${val}°):</strong> هذه الزاوية تسمح باختراق الجلد والجدار الأمامي للوريد بسلاسة دون ثقب الجدار الخلفي.`, '#22c55e');
+            } else if (state.insertionAngle > 35) {
+                setMentor('⚠️', `<strong>زاوية حادة وخطرة (${val}°):</strong> الزاوية أكبر من 35° قد تؤدي إلى ثقب الجدار الخلفي للوريد وحدوث ورم دموي (Hematoma)!`, '#ef4444');
+            } else {
+                setMentor('ℹ️', `<strong>زاوية سطحية جداً (${val}°):</strong> قد تبقى الإبرة في طبقة الأدمة ولا تدخل تجويف الوريد.`, '#f59e0b');
+            }
+        }
+
+        function toggleBevel() {
+            state.bevelUp = !state.bevelUp;
+            const btn = document.getElementById('btn-bevel');
+            if (state.bevelUp) {
+                btn.classList.add('active-toggle');
+                btn.innerText = "شطفة الإبرة للأعلى (Bevel Up) ✔";
+                setMentor('✅', '<strong>شطفة الإبرة للأعلى (Bevel Up):</strong> تقلل الألم وتمنع تمزق الجدار الأمامي للوريد أثناء الدخول.', '#22c55e');
+            } else {
+                btn.classList.remove('active-toggle');
+                btn.innerText = "شطفة الإبرة للأسفل (Bevel Down) ✖";
+                sfx.warn();
+                setMentor('⚠️', '<strong>خطأ تقني:</strong> جعل شطفة الإبرة للأسفل يزيد من ألم المريضة ويرفع خطر جرح الوريد!', '#ef4444');
+            }
+        }
+
+        function updateNeedleDepth(val) {
+            state.needleDepth = Number(val);
+            // حساب موقع رأس الإبرة بناءً على الزاوية والعمق
+            const rad = (state.insertionAngle * Math.PI) / 180;
+            const tipY = 175 + state.needleDepth * 2.1 * Math.sin(rad);
+
+            // تجويف الوريد في المقطع العرضي يقع بين Y = 225 و Y = 262
+            if (tipY >= 225 && tipY <= 262) {
+                if (!state.flashbackAchieved) {
+                    state.flashbackAchieved = true;
+                    sfx.flashback();
+                }
+                state.posteriorPunctured = false;
+                document.getElementById('btn-stage3-next').disabled = false;
+                setMentor('🩸', '<strong>ممتاز! ظهرت ومضة الدم (Blood Flashback) في حجرة الكانيولا!</strong> توقف عن دفع الإبرة المعدنية الآن واضغط زر التثبيت للانتقال لتزحيف القسطرة.', '#22c55e');
+            } else if (tipY > 262) {
+                state.posteriorPunctured = true;
+                document.getElementById('btn-stage3-next').disabled = true;
+                sfx.warn();
+                setMentor('🚨', '<strong>انفجار الوريد (Through-and-Through Puncture)!</strong> لقد دفعت الإبرة بعمق زائد أو بزاوية حادة فاخترقت الجدار الخلفي للوريد! اسحب الإبرة قليلاً للخلف.', '#ef4444');
+            } else {
+                document.getElementById('btn-stage3-next').disabled = true;
+            }
+        }
+
+        function confirmFlashbackStage() {
+            let pts = 250;
+            if (state.insertionAngle < 15 || state.insertionAngle > 30) pts -= 70;
+            if (!state.bevelUp) pts -= 60;
+            if (state.posteriorPunctured) pts -= 100;
+            state.breakdown.angleScore = Math.max(40, pts);
+            state.score += state.breakdown.angleScore;
+            updateHUD();
+            sfx.success();
+            enterStage(4);
+        }
+
+        function updateCatheterAdvance(val) {
+            state.catheterAdvanced = Number(val);
+            state.styletRetracted = Number(val);
+            checkStage4Completion();
+        }
+
+        function releaseTourniquetStage4() {
+            state.tourniquetApplied = false;
+            sfx.playTone(720, 'sine', 0.15);
+            const btn = document.getElementById('btn-release-tourniquet');
+            btn.classList.add('active-toggle');
+            btn.innerText = "✔ تم فك التورنيكيه بنجاح";
+            setMentor('✅', '<strong>أحسنت!</strong> فك التورنيكيه قبل دفع المحلول يمنع انفجار الوريد تحت ضغط السائل.', '#22c55e');
+            updateHUD();
+            checkStage4Completion();
+        }
+
+        function checkStage4Completion() {
+            if (state.catheterAdvanced >= 95) {
+                document.getElementById('btn-stage4-next').disabled = false;
+                if (state.tourniquetApplied) {
+                    setMentor('⚠️', '<strong>تنبيه مهم:</strong> لقد زحّفت القسطرة بالكامل، لكن لا تنسَ الضغط على <b>"فك التورنيكيه الآن"</b> قبل الانتقال!', '#f59e0b');
+                } else {
+                    setMentor('🌟', '<strong>إجراء احترافي متكامل!</strong> القسطرة البلاستيكية مستقرة داخل الوريد، والإبرة المعدنية مسحوبة، والتورنيكيه مفكوكة.', '#22c55e');
+                }
+            }
+        }
+
+        function updateSalineFlush(val) {
+            state.salineFlushed = Number(val);
+            if (state.salineFlushed >= 95) {
+                // حساب نقاط المرحلة 4 و 5
+                let pts = 200;
+                if (state.tourniquetApplied) {
+                    pts -= 80;
+                    state.tourniquetApplied = false;
+                }
+                if (state.tourniquetSeconds > 60) pts -= 40;
+                state.breakdown.advanceScore = Math.max(50, pts);
+                state.score += state.breakdown.advanceScore;
+                updateHUD();
+
+                document.getElementById('btn-finish-sim').disabled = false;
+                sfx.success();
+                setMentor('🎉', '<strong>نجحت عملية زرق الكانيولا بنسبة 100%!</strong> السائل الملحي يتدفق بانسيابية تامة داخل الوريد بدون أي تورم (No Infiltration). اضغط إنهاء لعرض لوحة الشرف!', '#22c55e');
+            }
+        }
+
+        /* =====================================================================
+           حلقة الرسم البصري التفاعلي (HTML5 Canvas Render Loop)
+           ===================================================================== */
+        const simCanvas = document.getElementById('simCanvas');
+        const ctx = simCanvas.getContext('2d');
+
+        function getCanvasCoords(e) {
+            const rect = simCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (simCanvas.width / rect.width),
+                y: (clientY - rect.top) * (simCanvas.height / rect.height)
+            };
+        }
+
+        simCanvas.addEventListener('pointerdown', (e) => {
+            state.isPointerDown = true;
+            handleCanvasInteraction(e, true);
+        });
+        simCanvas.addEventListener('pointermove', (e) => {
+            handleCanvasInteraction(e, false);
+        });
+        window.addEventListener('pointerup', () => {
+            state.isPointerDown = false;
+        });
+
+        function handleCanvasInteraction(e, isClick) {
+            const pos = getCanvasCoords(e);
+
+            // تفاعل المرحلة 1: جس الأوردة واختيارها
+            if (state.stage === 1) {
+                let found = null;
+                for (const v of anatomicalVessels) {
+                    for (const pt of v.path) {
+                        const dist = Math.hypot(pos.x - pt.x, pos.y - pt.y);
+                        if (dist < 28) {
+                            found = v;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+                state.hoveredVein = found;
+
+                if (found && isClick) {
+                    if (found.type === 'artery') {
+                        sfx.warn();
+                        setMentor('🚨', `<strong>حذارِ! (${found.name}):</strong> تشعر بنبض قوي تحت إصبعك! هذا شريان وليس وريداً، زرق الكانيولا هنا يسبب تشنجاً شريانياً ونزفاً خطراً.`, '#ef4444');
+                    } else {
+                        state.selectedVein = found;
+                        sfx.playTone(680, 'sine', 0.1);
+                        document.getElementById('selected-vein-label').innerHTML = `الوريد المحدد: <strong style="color:#38bdf8;">${found.name}</strong>`;
+                        document.getElementById('btn-stage1-next').disabled = false;
+                        setMentor('🩺', `<strong>نتيجة الجسّ (${found.name}):</strong> ${found.quality}.`, found.points >= 175 ? '#22c55e' : '#f59e0b');
+                    }
+                }
             }
 
-            const q = questions[currentQuestion];
-            document.getElementById('educational-tip').innerHTML = `💡 <strong>ملاحظة تعليمية:</strong> ${q.tip}`;
-            document.getElementById('q-title').innerText = `(${currentQuestion + 1}/${questions.length}) ${q.title}`;
-            
-            const optionsContainer = document.getElementById('q-options');
-            optionsContainer.innerHTML = '';
+            // تفاعل المرحلة 2: مسحة الكحول الحلزونية
+            if (state.stage === 2) {
+                state.swabX = pos.x;
+                state.swabY = pos.y;
+                if (state.isPointerDown) {
+                    const distFromCenter = Math.hypot(pos.x - 430, pos.y - 220);
+                    if (distFromCenter < 115 && state.swabProgress < 100) {
+                        state.swabProgress = Math.min(100, state.swabProgress + 1.4);
+                        document.getElementById('swab-pct').innerText = Math.round(state.swabProgress) + "%";
+                        if (Math.random() < 0.2) sfx.playTone(300 + state.swabProgress * 3, 'sine', 0.04, 0.04);
 
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt.text;
-                btn.onclick = () => selectOption(opt.correct, opt.pts);
-                optionsContainer.appendChild(btn);
-            });
-        }
-
-        function selectOption(isCorrect, pts) {
-            if (isCorrect) {
-                score += pts;
-                document.getElementById('current-score').innerText = score;
+                        if (state.swabProgress >= 100) {
+                            state.breakdown.sterileScore = 150;
+                            state.score += 150;
+                            updateHUD();
+                            document.getElementById('btn-stage2-next').disabled = false;
+                            sfx.success();
+                            setMentor('✨', '<strong>اكتمل التعقيم الحلزوني بنسبة 100%!</strong> تم تطهير منطقة البزل بالكامل وحصلت على 150 نقطة. انتقل الآن لمرحلة إدخال الكانيولا.', '#22c55e');
+                        }
+                    }
+                }
             }
-            currentQuestion++;
-            loadQuestion();
         }
 
-        function endGame() {
-            document.getElementById('screen-game').classList.remove('active');
-            document.getElementById('screen-end').classList.add('active');
-            
-            // حفظ النتيجة محلياً وإضافتها للوحة الشرف
-            let leaderboard = JSON.parse(localStorage.getItem('space_leaderboard') || '[]');
-            leaderboard.push({ name: playerName, score: score });
-            leaderboard.sort((a, b) => b.score - a.score);
-            localStorage.setItem('space_leaderboard', JSON.stringify(leaderboard));
+        function renderSimulator() {
+            ctx.clearRect(0, 0, simCanvas.width, simCanvas.height);
 
-            // عرض لوحة الشرف
-            const listEl = document.getElementById('leaderboard');
-            listEl.innerHTML = '';
-            leaderboard.forEach((item, index) => {
-                const li = document.createElement('li');
-                li.className = 'leaderboard-item';
-                li.innerHTML = `<span>#${index + 1} ${item.name}</span> <span class="score-badge">${item.score} نقطة</span>`;
-                listEl.appendChild(li);
+            // خلفية الشبكة الطبية الفضائية
+            ctx.strokeStyle = "rgba(56, 189, 248, 0.06)";
+            ctx.lineWidth = 1;
+            for (let x = 0; x < simCanvas.width; x += 30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, simCanvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < simCanvas.height; y += 30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(simCanvas.width, y); ctx.stroke();
+            }
+
+            if (state.stage === 1) renderStage1Arm();
+            else if (state.stage === 2) renderStage2Sterilization();
+            else if (state.stage === 3 || state.stage === 4 || state.stage === 5) renderCrossSectionView();
+
+            requestAnimationFrame(renderSimulator);
+        }
+
+        // رسم المرحلة 1: الذراع، التورنيكيه، والأوردة
+        function renderStage1Arm() {
+            // رسم الساعد واليد
+            ctx.save();
+            const skinGrad = ctx.createLinearGradient(270, 50, 570, 50);
+            skinGrad.addColorStop(0, "#d6a78a");
+            skinGrad.addColorStop(0.5, "#f1c6ab");
+            skinGrad.addColorStop(1, "#c99576");
+
+            ctx.fillStyle = skinGrad;
+            ctx.beginPath();
+            ctx.roundRect(285, 40, 270, 365, [40, 40, 60, 60]);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(255,255,255,0.2)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // رسم الأوردة والشريان
+            const veinWidthMultiplier = state.tourniquetApplied ? 1.65 : 1.0;
+            anatomicalVessels.forEach(v => {
+                ctx.beginPath();
+                ctx.moveTo(v.path[0].x, v.path[0].y);
+                for (let i = 1; i < v.path.length; i++) {
+                    ctx.lineTo(v.path[i].x, v.path[i].y);
+                }
+                ctx.strokeStyle = v.color;
+                ctx.lineWidth = (v.type === 'artery' ? 4 : 5.5) * veinWidthMultiplier;
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                ctx.stroke();
+
+                // دائرة تفاعلية عند التحويم أو الاختيار
+                if (state.hoveredVein === v || state.selectedVein === v) {
+                    const mid = v.path[1];
+                    ctx.beginPath();
+                    ctx.arc(mid.x, mid.y, 24, 0, Math.PI * 2);
+                    ctx.strokeStyle = v.type === 'artery' ? '#ef4444' : '#38bdf8';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    ctx.fillStyle = "rgba(2, 6, 23, 0.85)";
+                    ctx.fillRect(mid.x - 130, mid.y - 55, 260, 30);
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "bold 13px Cairo";
+                    ctx.textAlign = "center";
+                    ctx.fillText(v.name, mid.x, mid.y - 35);
+                }
             });
+
+            // رسم رباط التورنيكيه إذا تم تفعيله
+            if (state.tourniquetApplied) {
+                ctx.fillStyle = "#0284c7";
+                ctx.fillRect(278, 95, 284, 28);
+                ctx.strokeStyle = "#38bdf8";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(278, 95, 284, 28);
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 13px Cairo";
+                ctx.textAlign = "center";
+                ctx.fillText("تورنيكيه طبية مشدودة (7-10 سم أعلى الموقع)", 420, 114);
+            }
+            ctx.restore();
+        }
+
+        // رسم المرحلة 2: التعقيم الحلزوني
+        function renderStage2Sterilization() {
+            // خلفية الجلد المكبرة
+            ctx.fillStyle = "#ecc0a5";
+            ctx.beginPath();
+            ctx.roundRect(180, 40, 500, 350, 28);
+            ctx.fill();
+
+            // الوريد المختار تحت الجلد
+            ctx.strokeStyle = "rgba(37, 99, 235, 0.75)";
+            ctx.lineWidth = 14;
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(430, 60);
+            ctx.lineTo(430, 370);
+            ctx.stroke();
+
+            // منطقة التعقيم الحلزوني
+            const radius = (state.swabProgress / 100) * 110;
+            if (radius > 0) {
+                const sterileGrad = ctx.createRadialGradient(430, 215, 5, 430, 215, radius);
+                sterileGrad.addColorStop(0, "rgba(56, 189, 248, 0.45)");
+                sterileGrad.addColorStop(1, "rgba(34, 197, 94, 0.2)");
+                ctx.fillStyle = sterileGrad;
+                ctx.beginPath();
+                ctx.arc(430, 215, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // رسم المسار الحلزوني الإرشادي
+            ctx.strokeStyle = "rgba(15, 23, 42, 0.45)";
+            ctx.setLineDash([6, 6]);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let a = 0; a < Math.PI * 6; a += 0.1) {
+                const r = a * 5.5;
+                const x = 430 + Math.cos(a) * r;
+                const y = 215 + Math.sin(a) * r;
+                if (a === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // رسم مسحة الكحول الطبية (Swab)
+            ctx.save();
+            ctx.translate(state.swabX, state.swabY);
+            ctx.fillStyle = "#ffffff";
+            ctx.shadowColor = "rgba(0,0,0,0.35)";
+            ctx.shadowBlur = 10;
+            ctx.fillRect(-28, -28, 56, 56);
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-28, -28, 56, 56);
+            ctx.fillStyle = "#0284c7";
+            ctx.font = "bold 11px Cairo";
+            ctx.textAlign = "center";
+            ctx.fillText("Alcohol 70%", 0, 4);
+            ctx.restore();
+        }
+
+        // رسم المراحل 3 و 4 و 5: المقطع العرضي لطبقات الجلد والوريد والكانيولا
+        function renderCrossSectionView() {
+            // 1. طبقة البشرة والأدمة (Skin & Dermis)
+            ctx.fillStyle = "#eab696";
+            ctx.fillRect(80, 175, 700, 35);
+            ctx.fillStyle = "#d99b78";
+            ctx.fillRect(80, 210, 700, 110);
+
+            // 2. تجويف الوريد (Vein Lumen)
+            ctx.fillStyle = "#450a0a";
+            ctx.fillRect(80, 222, 700, 44);
+            // جدار الوريد الأمامي والخلفي
+            ctx.fillStyle = "#1d4ed8";
+            ctx.fillRect(80, 218, 700, 5);
+            ctx.fillRect(80, 265, 700, 5);
+
+            // تسميات تشريحية توضيحية
+            ctx.fillStyle = "rgba(255,255,255,0.8)";
+            ctx.font = "bold 12px Cairo";
+            ctx.textAlign = "right";
+            ctx.fillText("طبقة الجلد والأدمة (Epidermis & Dermis)", 765, 196);
+            ctx.fillStyle = "#f87171";
+            ctx.fillText("تجويف الوريد (Vein Lumen) - الهدف السريري", 765, 248);
+
+            // تأثير تدفق المحلول الملحي في المرحلة 5
+            if (state.stage === 5 && state.salineFlushed > 0) {
+                ctx.fillStyle = `rgba(56, 189, 248, ${(state.salineFlushed / 100) * 0.55})`;
+                ctx.fillRect(80, 223, 700 * (state.salineFlushed / 100), 42);
+            }
+
+            // 3. رسم الكانيولا والإبرة بزاوية الإدخال الحقيقية
+            ctx.save();
+            const entryX = 320;
+            const entryY = 175;
+            ctx.translate(entryX, entryY);
+            const rad = (state.insertionAngle * Math.PI) / 180;
+            ctx.rotate(rad);
+
+            const advancePx = (state.needleDepth / 100) * 190;
+            const cathExtraPx = (state.catheterAdvanced / 100) * 85;
+            const styletRetractPx = (state.styletRetracted / 100) * 110;
+
+            // القسطرة البلاستيكية (Catheter Sheath)
+            const gaugeColors = { 18: "#22c55e", 20: "#ec4899", 22: "#3b82f6", 24: "#eab308" };
+            ctx.fillStyle = "rgba(226, 232, 240, 0.85)";
+            ctx.fillRect(-130 + advancePx, -4, 125 + cathExtraPx, 8);
+
+            // جناح/قاعدة الكانيولا الملونة حسب الـ Gauge
+            ctx.fillStyle = gaugeColors[state.gauge] || "#22c55e";
+            ctx.fillRect(-165 + advancePx + cathExtraPx * 0.4, -10, 35, 20);
+
+            // الإبرة المعدنية (Metal Stylet)
+            ctx.fillStyle = "#94a3b8";
+            ctx.fillRect(-140 + advancePx - styletRetractPx, -2, 148, 4);
+
+            // حجرة ومضة الدم (Flashback Chamber)
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-195 + advancePx - styletRetractPx, -8, 30, 16);
+            if (state.flashbackAchieved) {
+                ctx.fillStyle = "#dc2626";
+                ctx.fillRect(-193 + advancePx - styletRetractPx, -6, 26, 12);
+            }
+
+            ctx.restore();
+
+            // عرض منقلة الزاوية البصرية في الأعلى
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(entryX, entryY, 55, Math.PI, Math.PI * 1.5);
+            ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = "bold 14px Cairo";
+            ctx.textAlign = "center";
+            ctx.fillText(`الزاوية: ${state.insertionAngle}°`, entryX - 55, entryY - 40);
+            ctx.restore();
+        }
+
+        renderSimulator();
+
+        /* =====================================================================
+           نظام لوحة الشرف وإرسال النتائج للباحث الرئيسي (Database & Sync)
+           ===================================================================== */
+        const defaultLeaderboard = [
+            { name: "مقتدى علي (الباحث الرئيسي)", gauge: "18G", rank: "استشاري تخدير فضائي", score: 780 },
+            { name: "فريق البحث السريري", gauge: "18G", rank: "أخصائي ماهر", score: 710 },
+            { name: "زميل المرحلة الرابعة", gauge: "20G", rank: "ممارس متقدم", score: 640 }
+        ];
+
+        function getClinicalRank(score) {
+            if (score >= 720) return "استشاري تخدير فضائي 🌟";
+            if (score >= 600) return "أخصائي قسطرة ماهر 💉";
+            if (score >= 450) return "ممارس سريري متقدم 🩺";
+            return "متدرب سريري واعد 📘";
+        }
+
+        async function finishSimulation() {
+            document.getElementById('view-sim').classList.remove('active');
+            document.getElementById('view-results').classList.add('active');
+            document.getElementById('hud-stage').innerText = "اكتمل التقييم";
+            if (state.tourniquetTimerId) clearInterval(state.tourniquetTimerId);
+
+            const total = Math.round(state.score);
+            const rankTitle = getClinicalRank(total);
+
+            setMentor('🏆', `<strong>أحسنت يا ${state.playerName}!</strong> أنهيت المحاكاة السريرية بمجموع <b>${total} نقطة</b> وحصلت على رتبة: <b>${rankTitle}</b>.`, '#22c55e');
+
+            // عرض تفصيل الدرجات
+            document.getElementById('score-breakdown').innerHTML = `
+                <div class="report-box"><div style="color:#94a3b8;font-size:0.8rem;">اختيار قياس الكانيولا (${state.gauge}G)</div><div style="color:#38bdf8;font-size:1.3rem;font-weight:900;">+${state.breakdown.gaugeScore}</div></div>
+                <div class="report-box"><div style="color:#94a3b8;font-size:0.8rem;">ربط التورنيكيه واختيار الوريد</div><div style="color:#38bdf8;font-size:1.3rem;font-weight:900;">+${state.breakdown.veinScore}</div></div>
+                <div class="report-box"><div style="color:#94a3b8;font-size:0.8rem;">التعقيم الحلزوني 70%</div><div style="color:#38bdf8;font-size:1.3rem;font-weight:900;">+${state.breakdown.sterileScore}</div></div>
+                <div class="report-box"><div style="color:#94a3b8;font-size:0.8rem;">زاوية البزل (${state.insertionAngle}°) والـ Flashback</div><div style="color:#38bdf8;font-size:1.3rem;font-weight:900;">+${state.breakdown.angleScore}</div></div>
+                <div class="report-box"><div style="color:#94a3b8;font-size:0.8rem;">تزحيف القسطرة والفحص الملحي</div><div style="color:#38bdf8;font-size:1.3rem;font-weight:900;">+${state.breakdown.advanceScore}</div></div>
+            `;
+
+            const newEntry = {
+                name: state.playerName,
+                gauge: state.gauge + "G",
+                rank: rankTitle,
+                score: total,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            await saveAndSyncLeaderboard(newEntry);
+        }
+
+        async function saveAndSyncLeaderboard(newEntry) {
+            let list = [...defaultLeaderboard];
+
+            // 1. محاولة قراءة ملف leaderboard.json من مستودع GitHub إن وجد
+            try {
+                const res = await fetch(CLOUD_CONFIG.GITHUB_JSON_PATH, { cache: "no-store" });
+                if (res.ok) {
+                    const fileData = await res.json();
+                    if (Array.isArray(fileData)) list = fileData;
+                }
+            } catch (e) {}
+
+            // 2. دمج النتائج المخزنة محلياً والنتيجة الجديدة
+            const localSaved = JSON.parse(localStorage.getItem('space_iv_leaderboard') || '[]');
+            const combinedMap = new Map();
+            [...list, ...localSaved, newEntry].forEach(item => {
+                const existing = combinedMap.get(item.name);
+                if (!existing || item.score >= existing.score) {
+                    combinedMap.set(item.name, item);
+                }
+            });
+
+            const finalLeaderboard = Array.from(combinedMap.values()).sort((a, b) => b.score - a.score);
+            localStorage.setItem('space_iv_leaderboard', JSON.stringify(finalLeaderboard));
+
+            // عرض الجدول
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            finalLeaderboard.forEach((row, idx) => {
+                const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx + 1}`));
+                const tr = document.createElement('tr');
+                if (row.name === newEntry.name) tr.style.background = "rgba(56, 189, 248, 0.15)";
+                tr.innerHTML = `
+                    <td style="font-weight:900;">${medal}</td>
+                    <td style="font-weight:700; color:#f8fafc;">${row.name}</td>
+                    <td>${row.gauge}</td>
+                    <td><span class="rank-badge">${row.rank}</span></td>
+                    <td style="font-weight:900; color:#22c55e;">${row.score}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // 3. إرسال إشعار فوري باسم اللاعب ونقاطه إلى تيليجرام و Google Sheets (إن تم وضع الرابط)
+            if (CLOUD_CONFIG.TELEGRAM_BOT_TOKEN && CLOUD_CONFIG.TELEGRAM_CHAT_ID) {
+                const text = `🚀 *لاعب جديد أنهى محاكي الكانيولا!*\n👤 *الاسم:* ${newEntry.name}\n💉 *قياس الكانيولا:* ${newEntry.gauge}\n🏆 *النقاط:* ${newEntry.score}\n🩺 *الرتبة:* ${newEntry.rank}`;
+                fetch(`https://api.telegram.org/bot${CLOUD_CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CLOUD_CONFIG.TELEGRAM_CHAT_ID, text, parse_mode: 'Markdown' })
+                }).catch(() => {});
+            }
+
+            if (CLOUD_CONFIG.GOOGLE_SHEET_WEBHOOK_URL) {
+                fetch(CLOUD_CONFIG.GOOGLE_SHEET_WEBHOOK_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEntry)
+                }).catch(() => {});
+            }
+        }
+
+        // تصدير ملف الداتابيس JSON مباشرة لرفعه في مستودع GitHub
+        function exportDatabaseJSON() {
+            const data = localStorage.getItem('space_iv_leaderboard') || JSON.stringify(defaultLeaderboard);
+            const blob = new Blob([JSON.stringify(JSON.parse(data), null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "leaderboard.json";
+            a.click();
+            URL.revokeObjectURL(url);
         }
     </script>
 </body>
