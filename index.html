@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>طاقم البحث العلمي | رحلة الفضاء الأكاديمية</title>
-    <!-- خط القاهرة الحديث -->
+    <title>محاذاة زرق الكانيولا | اللعبة التعليمية الفضائية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -12,18 +11,21 @@
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
         }
 
         body {
             background-color: #030712;
             color: #f8fafc;
             min-height: 100vh;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             position: relative;
+            overflow-x: hidden;
         }
 
-        /* خلفية الفضاء والنجوم المتحركة */
         #space-canvas {
             position: fixed;
             top: 0;
@@ -34,420 +36,214 @@
             background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
         }
 
-        /* حاوية الموقع الرئيسية */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        .game-container {
+            width: 100%;
+            max-width: 650px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            text-align: center;
             position: relative;
             z-index: 2;
         }
 
-        /* الهيدر الأكاديمي الفضائي */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        header h1 {
-            font-size: 2.3rem;
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
+        h1 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
             font-weight: 900;
-            letter-spacing: -1px;
         }
 
-        header p {
+        p.subtitle {
             color: #94a3b8;
-            font-size: 1.05rem;
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* شريط التنقل بين الأقسام */
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            color: #cbd5e1;
-            padding: 8px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
             font-size: 0.95rem;
-            transition: all 0.4s ease;
+            margin-bottom: 25px;
         }
 
-        .tab-btn:hover, .tab-btn.active {
-            background: #38bdf8;
-            color: #030712;
+        /* شاشات اللعبة */
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        /* حقل ادخال الاسم */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            background: rgba(30, 41, 59, 0.8);
+            color: #fff;
+            font-size: 1.1rem;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
             border-color: #38bdf8;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
         }
 
-        /* عنوان القسم */
-        .section-title {
-            text-align: center;
-            font-size: 1.6rem;
-            color: #38bdf8;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-
-        /* شبكة طاقم البحث الـ 15 (منظمة، مضغوطة وغير مزدحمة) */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 20px;
-            margin-bottom: 50px;
-        }
-
-        .student-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-            padding: 20px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .student-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(56, 189, 248, 0.5);
-            box-shadow: 0 12px 30px rgba(56, 189, 248, 0.15);
-            background: rgba(30, 41, 59, 0.85);
-        }
-
-        .student-img-wrapper {
-            width: 85px;
-            height: 85px;
-            margin: 0 auto 12px auto;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #38bdf8;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .student-card:hover .student-img-wrapper {
-            transform: scale(1.05);
-        }
-
-        .student-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .student-name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #f8fafc;
-            margin-bottom: 4px;
-        }
-
-        .student-role {
-            font-size: 0.85rem;
-            color: #38bdf8;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        /* تفاصيل الطالب المصغرة المنسدلة عند الضغط */
-        .student-info {
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-            color: #cbd5e1;
-            text-align: right;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 0;
-            margin-top: 6px;
-        }
-
-        .student-card.active .student-info {
-            max-height: 100px;
-            opacity: 1;
-            padding-top: 8px;
-        }
-
-        .student-info p {
-            margin-bottom: 3px;
-        }
-
-        /* قسم تحميل البحث PDF */
-        .pdf-section {
-            text-align: center;
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 20px;
-            padding: 35px;
-            margin-top: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-        }
-
-        .pdf-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+        .btn {
             background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
             color: #030712;
+            border: none;
             padding: 12px 30px;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s;
             box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
-            margin-top: 15px;
         }
 
-        .pdf-btn:hover {
+        .btn:hover {
             transform: scale(1.05);
             box-shadow: 0 12px 25px rgba(56, 189, 248, 0.6);
         }
 
-        /* زر الموسيقى العائم */
-        .music-float-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid #38bdf8;
-            color: #38bdf8;
-            border-radius: 50px;
-            padding: 10px 18px;
-            font-weight: 700;
+        /* صندوق الملاحظات التوضيحية المستمرة */
+        .tips-box {
+            background: rgba(56, 189, 248, 0.1);
+            border-right: 4px solid #38bdf8;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: right;
             font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
+            color: #e2e8f0;
+            animation: pulseTip 2s infinite;
         }
 
-        .music-float-btn:hover {
+        @keyframes pulseTip {
+            0% { border-color: #38bdf8; }
+            50% { border-color: #818cf8; }
+            100% { border-color: #38bdf8; }
+        }
+
+        /* منطقة التحدي والخيارات الطبية */
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px;
+            border-radius: 14px;
+            color: #cbd5e1;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: right;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: #38bdf8;
+            color: #fff;
+            transform: translateX(-5px);
+        }
+
+        /* لوحة الشرف */
+        .leaderboard-list {
+            list-style: none;
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .leaderboard-item {
+            background: rgba(30, 41, 59, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .score-badge {
             background: #38bdf8;
             color: #030712;
-            transform: scale(1.05);
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- خلفية النجوم المتحركة -->
     <canvas id="space-canvas"></canvas>
 
-    <div class="container">
-        <!-- الهيدر -->
-        <header>
-            <h1>مقارنة معدل حدوث الغثيان والقيء</h1>
-            <p>بين التخدير العام والتخدير النصفي الشوكي لدى المريضات الخاضعات لعمليات القيصرية</p>
-        </header>
-
-        <!-- شريط التنقل -->
-        <div class="nav-tabs">
-            <button class="tab-btn active">طاقم الباحثين (15)</button>
-            <button class="tab-btn">خلفية البحث</button>
-            <button class="tab-btn">المنهجية</button>
-            <button class="tab-btn">النتائج</button>
-        </div>
-
-        <!-- عنوان القسم -->
-        <h2 class="section-title">سجل طاقم السفينة الأكاديمي</h2>
-        <p class="section-subtitle">اضغط على بطاقة أي زميل لعرض تفاصيل دوره في البحث</p>
-
-        <!-- شبكة الـ 15 باحث (منظمة ومتجاوبة) -->
-        <div class="team-grid">
+    <div class="game-container">
+        
+        <!-- الشاشة الأولى: تسجيل الاسم -->
+        <div id="screen-start" class="screen active">
+            <h1>محاكاة زرق الكانيولا الطبية 💉</h1>
+            <p class="subtitle">اختبر مهاراتك الإكلينيكية واجمع النقاط في بيئة الفضاء الأكاديمي</p>
             
-            <!-- 1. مقتدى علي -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper">
-                    <img src="images/moqtada.jpg" alt="مقتدى علي" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'">
-                </div>
-                <div class="student-name">مقتدى علي</div>
-                <div class="student-role">الباحث الرئيسي</div>
-                <div class="student-info">
-                    <p><strong>الدور:</strong> تصميم البحث والتحليل</p>
-                    <p><strong>المرحلة:</strong> 2025/2026</p>
-                </div>
+            <div class="input-group">
+                <input type="text" id="player-name" placeholder="أدخل اسمك الباحث الكريم..." autocomplete="off">
             </div>
-
-            <!-- 2. الزميل الثاني -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 2</div>
-                <div class="student-role">عضو الفريق السريري</div>
-                <div class="student-info"><p><strong>الدور:</strong> توثيق الحالات</p></div>
-            </div>
-
-            <!-- 3. الزميل الثالث -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 3</div>
-                <div class="student-role">مراجعة الأدبيات</div>
-                <div class="student-info"><p><strong>الدور:</strong> جمع المصادر الطبية</p></div>
-            </div>
-
-            <!-- 4. الزميل الرابع -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 4</div>
-                <div class="student-role">فريق المتابعة</div>
-                <div class="student-info"><p><strong>الدور:</strong> متابعة المريضات</p></div>
-            </div>
-
-            <!-- 5. الزميل الخامس -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 5</div>
-                <div class="student-role">فريق الإحصاء</div>
-                <div class="student-info"><p><strong>الدور:</strong> معالجة البيانات</p></div>
-            </div>
-
-            <!-- 6. الزميل السادس -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 6</div>
-                <div class="student-role">منسق العمليات</div>
-                <div class="student-info"><p><strong>الدور:</strong> التنسيق الميداني</p></div>
-            </div>
-
-            <!-- 7. الزميل السابع -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 7</div>
-                <div class="student-role">صياغة الفصول</div>
-                <div class="student-info"><p><strong>الدور:</strong> كتابة المقدمة</p></div>
-            </div>
-
-            <!-- 8. الزميل الثامن -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 8</div>
-                <div class="student-role">مراجعة النتائج</div>
-                <div class="student-info"><p><strong>الدور:</strong> تحليل المقارنات</p></div>
-            </div>
-
-            <!-- 9. الزميل التاسع -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 9</div>
-                <div class="student-role">التوثيق الإداري</div>
-                <div class="student-info"><p><strong>الدور:</strong> ترتيب المستندات</p></div>
-            </div>
-
-            <!-- 10. الزميل العاشر -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 10</div>
-                <div class="student-role">فريق الميدان</div>
-                <div class="student-info"><p><strong>الدور:</strong> جمع الاستبيانات</p></div>
-            </div>
-
-            <!-- 11. الزميل الحادي عشر -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 11</div>
-                <div class="student-role">فريق التحليل</div>
-                <div class="student-info"><p><strong>الدور:</strong> مراجعة الجداول</p></div>
-            </div>
-
-            <!-- 12. الزميل الثاني عشر -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 12</div>
-                <div class="student-role">فريق الدعم</div>
-                <div class="student-info"><p><strong>الدور:</strong> تدقيق المراجع</p></div>
-            </div>
-
-            <!-- 13. الزميل الثالث عشر -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 13</div>
-                <div class="student-role">فريق المناقشة</div>
-                <div class="student-info"><p><strong>الدور:</strong> صياغة الاستنتاجات</p></div>
-            </div>
-
-            <!-- 14. الزميل الرابع عشر -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 14</div>
-                <div class="student-role">فريق المتابعة</div>
-                <div class="student-info"><p><strong>الدور:</strong> التنسيق العام</p></div>
-            </div>
-
-            <!-- 15. الزميل الخامس عشر -->
-            <div class="student-card" onclick="this.classList.toggle('active')">
-                <div class="student-img-wrapper"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300" alt="عضو"></div>
-                <div class="student-name">اسم الزميل 15</div>
-                <div class="student-role">فريق الإخراج</div>
-                <div class="student-info"><p><strong>الدور:</strong> المظهر النهائي للبحث</p></div>
-            </div>
-
+            <button class="btn" onclick="startGame()">ابدأ التحدي 🚀</button>
         </div>
 
-        <!-- قسم تحميل البحث PDF -->
-        <div class="pdf-section">
-            <h2 style="color: #f8fafc; margin-bottom: 8px; font-size: 1.3rem;">توثيق وعرض البحث الرسمي</h2>
-            <p style="color: #94a3b8; margin-bottom: 15px; font-size: 0.95rem;">استعرض وحمل النسخة المحدثة من ملف الـ PDF الخاص بالبحث:</p>
-            <a href="research.pdf" class="pdf-btn" target="_blank">
-                📄 تحميل واستعراض ملف الـ PDF
-            </a>
+        <!-- الشاشة الثانية: اللعبة والأسئلة التفاعلية -->
+        <div id="screen-game" class="screen">
+            <div class="tips-box" id="educational-tip">
+                💡 <strong>ملاحظة تعليمية:</strong> جاري تحميل التوجيهات الطبية...
+            </div>
+
+            <div class="question-title" id="q-title">السؤال الأول...</div>
+            <div class="options-grid" id="q-options">
+                <!-- الخيارات تتولد ديناميكياً -->
+            </div>
+            <div style="color: #38bdf8; font-weight: bold; font-size: 1.1rem;">النقاط الحالية: <span id="current-score">0</span></div>
         </div>
+
+        <!-- الشاشة الثالثة: النتائج ولوحة الشرف -->
+        <div id="screen-end" class="screen">
+            <h1>🎉 أتممت المهمة بنجاح!</h1>
+            <p class="subtitle">لقد أنهيت محاكاة زرق الكانيولا بجدارة.</p>
+            
+            <h3 style="color: #38bdf8; margin-bottom: 10px;">🏆 لوحة الشرف الفضائية</h3>
+            <ul class="leaderboard-list" id="leaderboard">
+                <!-- يتم جلب البيانات هنا -->
+            </ul>
+
+            <button class="btn" onclick="location.reload()">إعادة المحاولة 🔄</button>
+        </div>
+
     </div>
 
-    <!-- عنصر الصوت الخلفي -->
-    <audio id="bg-music" loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- زر الموسيقى العائم -->
-    <button class="music-float-btn" onclick="toggleMusic()">
-        🎵 <span id="music-label">تشغيل موسيقى الفضاء</span>
-    </button>
-
-    <!-- سكريبت الفضاء والموسيقى -->
     <script>
+        // خلفية الفضاء المتحركة
         const canvas = document.getElementById('space-canvas');
         const ctx = canvas.getContext('2d');
-
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
@@ -456,52 +252,136 @@
             height = canvas.height = window.innerHeight;
         });
 
-        const stars = Array.from({ length: 150 }, () => ({
+        const stars = Array.from({ length: 120 }, () => ({
             x: Math.random() * width,
             y: Math.random() * height,
             radius: Math.random() * 1.5,
             alpha: Math.random(),
-            speed: Math.random() * 0.2 + 0.05
+            speed: Math.random() * 0.15 + 0.05
         }));
 
         function animateSpace() {
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#ffffff';
-            
             stars.forEach(star => {
                 ctx.globalAlpha = star.alpha;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
                 ctx.fill();
-
                 star.y -= star.speed;
                 if (star.y < 0) star.y = height;
-
-                star.alpha += (Math.random() - 0.5) * 0.03;
-                if (star.alpha < 0.1) star.alpha = 0.1;
-                if (star.alpha > 1) star.alpha = 1;
             });
-
             requestAnimationFrame(animateSpace);
         }
         animateSpace();
 
-        function toggleMusic() {
-            const music = document.getElementById('bg-music');
-            const label = document.getElementById('music-label');
-            
-            if (music.paused) {
-                music.play().then(() => {
-                    label.innerText = "إيقاف الموسيقى 🔇";
-                }).catch(e => {
-                    alert("يرجى التأكد من رفع ملف music.mp3 في مجلد المشروع!");
-                });
-            } else {
-                music.pause();
-                label.innerText = "تشغيل موسيقى الفضاء 🎵";
+        // منطق اللعبة
+        let playerName = "";
+        let score = 0;
+        let currentQuestion = 0;
+
+        const questions = [
+            {
+                tip: "تأكد دائماً من تعقيم مكان الإدخال بحركة دائرية من المركز إلى الخارج لمدة لا تقل عن 30 ثانية.",
+                title: "ما هي أفضل زاوية لإدخال الإبرة (الكانيولا) في الوريد الظهري لليد؟",
+                options: [
+                    { text: "زاوية 15 إلى 30 درجة مع اتجاه الوريد", correct: true, pts: 20 },
+                    { text: "زاوية قائمة 90 درجة تماماً", correct: false, pts: 0 },
+                    { text: "زاوية أفقية تماماً 0 درجة موازية للجلد", correct: false, pts: 5 }
+                ]
+            },
+            {
+                tip: "ربط التورنيكيه (Tourniquet) يجب ألا يتجاوز دقيقة إلى دقيقتين لمنع احتقان الدم وتلف الأنسجة.",
+                title: "أين يجب ربط التورنيكيه بالنسبة لموقع البزل المقترح؟",
+                options: [
+                    { text: "أعلى مكان البزل بحوالي 7 إلى 10 سم", correct: true, pts: 20 },
+                    { text: "تحت مكان البزل مباشرة", correct: false, pts: 0 },
+                    { text: "حول المعصم بغض النظر عن الوريد", correct: false, pts: 5 }
+                ]
+            },
+            {
+                tip: "ظهور عودة الدم (Flashback) في حجرة الكانيولا يؤكد نجاح الدخول داخل تجويف الوريد.",
+                title: "ما هو التصرف الفوري الصحيح بمجرد رؤية تدفق الدم في غرفة الكانيولا؟",
+                options: [
+                    { text: "خفض زاوية الإدخال قليلاً ودفع القسطرة البلاستيكية للأمام وسحب الإبرة المعدنية", correct: true, pts: 30 },
+                    { text: "دفع الإبرة المعدنية بشكل كامل وسريع للداخل", correct: false, pts: 0 },
+                    { text: "سحب الكانيولا بالكامل فوراً", correct: false, pts: 0 }
+                ]
+            },
+            {
+                tip: "تجنب الأوردة الموجودة بالقرب من المفاصل أو الصمامات لتفادي تسرب السوائل أو الألم المزمن للمريضة.",
+                title: "عند اختيار الوريد لعمليات القيصرية، ما هي الأوردة الأفضل تفضيلاً بالبداية؟",
+                options: [
+                    { text: "أوردة ظهر اليد والساعد (Dorsal & Forearm veins)", correct: true, pts: 30 },
+                    { text: "أوردة منطقة الرقبة الظاهرة", correct: false, pts: 0 },
+                    { text: "الأوردة المجاورة للشرايين مباشرة", correct: false, pts: 0 }
+                ]
             }
+        ];
+
+        function startGame() {
+            const input = document.getElementById('player-name');
+            if (!input.value.trim()) {
+                alert("يرجى كتابة اسمك الكريم أولاً لبدء التحدي!");
+                return;
+            }
+            playerName = input.value.trim();
+            document.getElementById('screen-start').classList.remove('active');
+            document.getElementById('screen-game').classList.add('active');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                endGame();
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            document.getElementById('educational-tip').innerHTML = `💡 <strong>ملاحظة تعليمية:</strong> ${q.tip}`;
+            document.getElementById('q-title').innerText = `(${currentQuestion + 1}/${questions.length}) ${q.title}`;
+            
+            const optionsContainer = document.getElementById('q-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => selectOption(opt.correct, opt.pts);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(isCorrect, pts) {
+            if (isCorrect) {
+                score += pts;
+                document.getElementById('current-score').innerText = score;
+            }
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function endGame() {
+            document.getElementById('screen-game').classList.remove('active');
+            document.getElementById('screen-end').classList.add('active');
+            
+            // حفظ النتيجة محلياً وإضافتها للوحة الشرف
+            let leaderboard = JSON.parse(localStorage.getItem('space_leaderboard') || '[]');
+            leaderboard.push({ name: playerName, score: score });
+            leaderboard.sort((a, b) => b.score - a.score);
+            localStorage.setItem('space_leaderboard', JSON.stringify(leaderboard));
+
+            // عرض لوحة الشرف
+            const listEl = document.getElementById('leaderboard');
+            listEl.innerHTML = '';
+            leaderboard.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'leaderboard-item';
+                li.innerHTML = `<span>#${index + 1} ${item.name}</span> <span class="score-badge">${item.score} نقطة</span>`;
+                listEl.appendChild(li);
+            });
         }
     </script>
 </body>
 </html>
-
