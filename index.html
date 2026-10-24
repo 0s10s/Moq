@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>محاكي زرق الكانيولا 3D | Build #100</title>
+    <title>محاكي زرق الكانيولا 3D | التحديث رقم 2 (Update #2)</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,7 +11,7 @@
             --cyan: #38bdf8;
             --green: #22c55e;
             --red: #ef4444;
-            --panel: rgba(15, 23, 42, 0.9);
+            --panel: rgba(15, 23, 42, 0.92);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
@@ -19,201 +19,199 @@
 
         #canvas-container { position: absolute; inset: 0; z-index: 1; }
 
-        /* واجهة المستخدم العلوية HUD */
+        /* شريط المراقبة الحيوية HUD */
         .hud {
             position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 10; display: flex; gap: 15px; background: var(--panel);
-            backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 10px 20px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 10; display: flex; gap: 20px; background: var(--panel);
+            backdrop-filter: blur(14px); border: 1px solid rgba(56, 189, 248, 0.4);
+            padding: 10px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
-        .hud-item { font-size: 0.9rem; font-weight: 700; color: #94a3b8; }
+        .hud-item { font-size: 0.92rem; font-weight: 700; color: #94a3b8; }
         .hud-item span { color: var(--cyan); }
 
         /* غيمة الملاحظات الطافية (Floating Cloud Notification) */
         .cloud-notification {
-            position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
-            z-index: 10; background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px); border: 2px solid var(--cyan);
-            padding: 12px 24px; border-radius: 20px; box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
-            text-align: center; max-width: 450px; animation: cloudPulse 2s infinite ease-in-out;
+            position: absolute; top: 85px; left: 50%; transform: translateX(-50%);
+            z-index: 10; background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(14px); border: 2px solid var(--cyan);
+            padding: 12px 26px; border-radius: 22px; box-shadow: 0 10px 35px rgba(56, 189, 248, 0.3);
+            text-align: center; max-width: 480px; animation: cloudPulse 2.5s infinite ease-in-out;
             transition: all 0.3s ease;
         }
-        .cloud-title { font-size: 0.95rem; font-weight: 900; color: var(--cyan); margin-bottom: 2px; }
-        .cloud-desc { font-size: 0.85rem; color: #e2e8f0; line-height: 1.4; }
+        .cloud-title { font-size: 1rem; font-weight: 900; color: var(--cyan); margin-bottom: 3px; }
+        .cloud-desc { font-size: 0.86rem; color: #cbd5e1; line-height: 1.5; }
 
         @keyframes cloudPulse {
             0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-5px); }
+            50% { transform: translateX(-50%) translateY(-6px); }
         }
 
         /* لوحة التحكم السفلية */
         .controls-panel {
             position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
-            z-index: 10; background: var(--panel); backdrop-filter: blur(16px);
-            border: 1px solid rgba(56, 189, 248, 0.3); padding: 15px 25px; border-radius: 20px;
-            display: flex; gap: 12px; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            z-index: 10; background: var(--panel); backdrop-filter: blur(18px);
+            border: 1px solid rgba(56, 189, 248, 0.4); padding: 16px 28px; border-radius: 22px;
+            display: flex; gap: 14px; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.85);
             flex-wrap: wrap; justify-content: center;
         }
         .btn {
             background: linear-gradient(135deg, var(--cyan), #2563eb); color: #020617;
-            border: none; padding: 10px 22px; border-radius: 50px; font-weight: 800; font-size: 0.95rem;
-            cursor: pointer; transition: all 0.25s; box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+            border: none; padding: 11px 26px; border-radius: 50px; font-weight: 800; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.25s; box-shadow: 0 5px 20px rgba(56, 189, 248, 0.35);
         }
         .btn:hover { transform: scale(1.05); }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-        .slider-group { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #94a3b8; }
-        input[type="range"] { accent-color: var(--cyan); width: 130px; cursor: pointer; }
+        .slider-group { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: #94a3b8; }
+        input[type="range"] { accent-color: var(--cyan); width: 150px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- واجهة المراقبة الحيوية -->
+    <!-- الهيدر العلوي -->
     <div class="hud">
-        <div class="hud-item">الخطوة: <span id="hud-step">1 / 4</span></div>
-        <div class="hud-item">النقاط: <span id="hud-score">0</span></div>
+        <div class="hud-item">المرحلة: <span id="hud-step">1 / 4</span></div>
+        <div class="hud-item">النقاط العلمية: <span id="hud-score">0</span></div>
     </div>
 
     <!-- غيمة الملاحظات الطافية -->
     <div class="cloud-notification" id="cloud-box">
-        <div class="cloud-title" id="cloud-title">الخطوة 1: التعقيم والقفازات 🧤</div>
-        <div class="cloud-desc" id="cloud-desc">انقر على الزر أدناه لارتداء القفازات المعقمة قبل بدء الإجراء الطبي.</div>
+        <div class="cloud-title" id="cloud-title">المرحلة 1: تهيئة القفازات المعقمة 🧤</div>
+        <div class="cloud-desc" id="cloud-desc">أهلاً بك في الإصدار رقم 2 (Update #2). انقر على الزر أدناه لارتداء القفازات وبدء إجراء التخدير القيصري.</div>
     </div>
 
-    <!-- 3D Canvas Container -->
+    <!-- مسرح الـ 3D -->
     <div id="canvas-container"></div>
 
-    <!-- لوحة التحكم التفاعلية -->
+    <!-- لوحة التحكم -->
     <div class="controls-panel" id="action-controls">
-        <button class="btn" id="action-btn" onclick="nextStep()">ارتداء القفازات 🧤</button>
+        <button class="btn" id="action-btn" onclick="nextStep()">ارتداء القفازات الطبية 🧤</button>
     </div>
 
-    <!-- استيراد مكتبات Three.js عبر CDN -->
+    <!-- مكتبة Three.js ثلاثية الأبعاد -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 1. إعداد مشهد الـ 3D (Three.js) ---
+        // --- 1. بناء مشهد Three.js 3D ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x030712);
-        scene.fog = new THREE.FogExp2(0x030712, 0.035);
+        scene.fog = new THREE.FogExp2(0x030712, 0.03);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 4, 7);
+        camera.position.set(0, 3.8, 6.8);
         camera.lookAt(0, 0, 0);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.shadowMap.enabled = true;
         container.appendChild(renderer.domElement);
 
         // إضاءة صالة العمليات الفضائية
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.2);
-        dirLight.position.set(5, 10, 7);
+        const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
+        dirLight.position.set(6, 12, 8);
         dirLight.castShadow = true;
         scene.add(dirLight);
 
-        const pointLight = new THREE.PointLight(0x818cf8, 1.5, 10);
+        const pointLight = new THREE.PointLight(0x818cf8, 2, 12);
         pointLight.position.set(0, 3, 2);
         scene.add(pointLight);
 
-        // --- 2. بناء مجسم الذراع والأوردة 3D ---
+        // --- 2. مجسم الذراع البشري والأوردة 3D ---
         const armGroup = new THREE.Group();
         scene.add(armGroup);
 
-        // الذراع البشري
-        const armGeo = new THREE.CylinderGeometry(0.8, 0.9, 5, 32);
-        const armMat = new THREE.MeshStandardMaterial({ color: 0xd89d7c, roughness: 0.6 });
+        // الساعد البشري
+        const armGeo = new THREE.CylinderGeometry(0.75, 0.85, 4.8, 32);
+        const armMat = new THREE.MeshStandardMaterial({ color: 0xdb9f7e, roughness: 0.55, metalness: 0.05 });
         const armMesh = new THREE.Mesh(armGeo, armMat);
         armMesh.rotation.z = Math.PI / 2;
         armMesh.castShadow = true;
         armMesh.receiveShadow = true;
         armGroup.add(armMesh);
 
-        // تورنيكيه ثلاثي الأبعاد (مخفي بالبداية)
-        const tourniquetGeo = new THREE.CylinderGeometry(0.85, 0.85, 0.4, 32);
-        const tourniquetMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3 });
-        const tourniquetMesh = new THREE.Mesh(tourniquetGeo, tourniquetMat);
-        tourniquetMesh.rotation.z = Math.PI / 2;
-        tourniquetMesh.position.x = 1.2;
-        tourniquetMesh.visible = false;
-        armGroup.add(tourniquetMesh);
+        // التورنيكيه (يظهر بالمرحلة 2)
+        const tournGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.35, 32);
+        const tournMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.2 });
+        const tournMesh = new THREE.Mesh(tournGeo, tournMat);
+        tournMesh.rotation.z = Math.PI / 2;
+        tournMesh.position.x = 1.1;
+        tournMesh.visible = false;
+        armGroup.add(tournMesh);
 
-        // الأوردة (قابل للنقر عبر Raycaster)
+        // الأوردة والشريان 3D (تفاعلية عبر Raycaster)
         const veinGroup = new THREE.Group();
         armGroup.add(veinGroup);
 
         const veinMat = new THREE.MeshBasicMaterial({ color: 0x2563eb });
         const arteryMat = new THREE.MeshBasicMaterial({ color: 0xdc2626 }); // شريان خطير
 
-        // وريد 1 (الوريد المثالي Cephalic)
-        const vein1Geo = new THREE.CylinderGeometry(0.12, 0.12, 3.2, 16);
-        const vein1 = new THREE.Mesh(vein1Geo, veinMat);
+        // الوريد الصحيح (Cephalic)
+        const v1Geo = new THREE.CylinderGeometry(0.11, 0.11, 3.0, 16);
+        const vein1 = new THREE.Mesh(v1Geo, veinMat);
         vein1.rotation.z = Math.PI / 2;
-        vein1.position.set(-0.2, 0.35, 0);
-        vein1.userData = { type: 'correct', name: 'الوريد الكعبري (Cephalic Vein)' };
+        vein1.position.set(-0.2, 0.32, 0);
+        vein1.userData = { type: 'correct', name: 'الوريد الكعبري الساعدي (Cephalic Vein)' };
         veinGroup.add(vein1);
 
-        // شريان (خاطئ)
-        const artGeo = new THREE.CylinderGeometry(0.1, 0.1, 3.2, 16);
+        // الشريان الخاطئ
+        const artGeo = new THREE.CylinderGeometry(0.09, 0.09, 3.0, 16);
         const artery = new THREE.Mesh(artGeo, arteryMat);
         artery.rotation.z = Math.PI / 2;
-        artery.position.set(-0.2, -0.35, 0);
-        artery.userData = { type: 'wrong', name: 'الشريان الكعبري النابض (خطر!)' };
+        artery.position.set(-0.2, -0.32, 0);
+        artery.userData = { type: 'wrong', name: 'الشريان الكعبري النابض (محظور!)' };
         veinGroup.add(artery);
 
-        // الكانيولا / الإبرة 3D
-        const cannulaGroup = new THREE.Group();
-        scene.add(cannulaGroup);
-        cannulaGroup.visible = false;
+        // السرنجة والكانيولا 3D
+        const needleGroup = new THREE.Group();
+        scene.add(needleGroup);
+        needleGroup.visible = false;
 
-        const needleGeo = new THREE.CylinderGeometry(0.03, 0.03, 1.8, 16);
-        const needleMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.1 });
-        const needleMesh = new THREE.Mesh(needleGeo, needleMat);
-        needleMesh.rotation.z = Math.PI / 2;
-        cannulaGroup.add(needleMesh);
+        const nGeo = new THREE.CylinderGeometry(0.025, 0.025, 1.6, 16);
+        const nMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.95, roughness: 0.1 });
+        const nMesh = new THREE.Mesh(nGeo, nMat);
+        nMesh.rotation.z = Math.PI / 2;
+        needleGroup.add(nMesh);
 
-        // حجرة ومضة الدم (Flashback Chamber)
-        const flashGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.5, 16);
-        const flashMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, transparent: true, opacity: 0.2 });
-        const flashMesh = new THREE.Mesh(flashGeo, flashMat);
-        flashMesh.rotation.z = Math.PI / 2;
-        flashMesh.position.x = 0.9;
-        cannulaGroup.add(flashMesh);
+        // حجرة الـ Flashback (ومضة الدم)
+        const fGeo = new THREE.CylinderGeometry(0.075, 0.075, 0.45, 16);
+        const fMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, transparent: true, opacity: 0.15 });
+        const fMesh = new THREE.Mesh(fGeo, fMat);
+        fMesh.rotation.z = Math.PI / 2;
+        fMesh.position.x = 0.8;
+        needleGroup.add(fMesh);
 
-        // --- 3. منطق اللعبة والخطوات (State Machine) ---
-        let gameState = {
+        // --- 3. حالة اللعبة والمنطق (State & Events) ---
+        let game = {
             step: 1,
             score: 0,
-            gloves: false,
-            tourniquet: false,
-            veinSelected: false,
-            angle: 20
+            angle: 22,
+            veinChosen: false
         };
 
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
 
-        window.addEventListener('click', (e) => {
-            if (gameState.step === 3) {
+        window.addEventListener('pointerdown', (e) => {
+            if (game.step === 3) {
                 mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
                 mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
                 raycaster.setFromCamera(mouse, camera);
-                const intersects = raycaster.intersectObjects(veinGroup.children);
+                const hits = raycaster.intersectObjects(veinGroup.children);
 
-                if (intersects.length > 0) {
-                    const hit = intersects[0].object;
-                    if (hit.userData.type === 'correct') {
-                        gameState.veinSelected = true;
-                        gameState.score += 250;
-                        updateCloud('✔ اختيار ممتاز!', `تم تحديد ${hit.userData.name} بنجاح. الأوردة السطحية هنا مثالية للعمليات القيصرية.`);
+                if (hits.length > 0) {
+                    const hitObj = hits[0].object;
+                    if (hitObj.userData.type === 'correct') {
+                        game.veinChosen = true;
+                        game.score += 300;
+                        updateCloud('✔ اختيار وعائي سليم!', `تم جس وتحديد ${hitObj.userData.name} بنجاح. هذا الوريد ممتاز لإعطاء السوائل ومضاد الغثيان (PONV).`);
                         document.getElementById('action-btn').disabled = false;
                         document.getElementById('action-btn').innerText = "الانتقال لزاوية الوخز 📐";
                     } else {
-                        updateCloud('🚨 خطأ تشريحي خطير!', `هذا ${hit.userData.name}! وعاء نابض تحت ضغط عالٍ، يُمنع البزل فيه بتاتاً.`);
+                        updateCloud('🚨 تحذير سريري خطير!', `هذا هو ${hitObj.userData.name}! وعاء دموي شرياني نابض، يُمنع زرق الكانيولا فيه تماماً.`);
                     }
                 }
             }
@@ -225,67 +223,64 @@
         }
 
         function nextStep() {
-            if (gameState.step === 1) {
-                gameState.gloves = true;
-                gameState.score += 150;
-                gameState.step = 2;
-                updateCloud('الخطوة 2: ربط التورنيكيه 🎗️', 'تم ارتداء القفازات بنجاح. انقر الآن لربط التورنيكيه 7–10 سم أعلى الموقع لإبراز الأوردة.');
+            if (game.step === 1) {
+                game.score += 150;
+                game.step = 2;
+                updateCloud('المرحلة 2: ربط التورنيكيه 🎗️', 'تم ارتداء القفازات المعقمة. انقر على الزر لربط التورنيكيه 7–10 سم أعلى موقع البزل لإبراز الأوردة.');
                 document.getElementById('action-btn').innerText = "ربط التورنيكيه 🎗️";
-            } else if (gameState.step === 2) {
-                gameState.tourniquet = true;
-                tourniquetMesh.visible = true;
-                gameState.score += 150;
-                gameState.step = 3;
-                updateCloud('الخطوة 3: جس واختيار الوريد 🔍', 'انقر بالماوس مباشرة على الوريد الصحيح (الأزرق العلوي) على ذراع المريضة 3D.');
-                document.getElementById('action-btn').innerText = "اختر الوريد على الذراع أولاً";
+            } else if (game.step === 2) {
+                tournMesh.visible = true;
+                game.score += 150;
+                game.step = 3;
+                updateCloud('المرحلة 3: جس واختيار الوريد 🔍', 'انقر بالماوس أو الإصبع مباشرة على الوريد الصحيح (الأزرق العلوي) على ذراع المريضة 3D.');
+                document.getElementById('action-btn').innerText = "اختر الوريد على الذراع 3D";
                 document.getElementById('action-btn').disabled = true;
-            } else if (gameState.step === 3) {
-                gameState.step = 4;
-                cannulaGroup.visible = true;
-                updateCloud('الخطوة 4: زاوية الإدخال والـ Flashback 📐', 'استخدم المنزلق أدناه لضبط زاوية الوخز (15° - 30°) ثم اضغط إتمام الوخز.');
+            } else if (game.step === 3) {
+                game.step = 4;
+                needleGroup.visible = true;
+                updateCloud('المرحلة 4: زاوية الوخز ومراقبة الـ Flashback 📐', 'استخدم المنزلق أدناه لضبط زاوية الوخز بين 15° و 30° ثم اضغط إتمام الوخز.');
                 document.getElementById('action-controls').innerHTML = `
                     <div class="slider-group">
-                        <label>الزاوية: <b id="ang-txt" style="color:var(--cyan);">20°</b></label>
-                        <input type="range" min="10" max="50" value="20" oninput="adjustAngle(this.value)">
+                        <label>الزاوية: <b id="ang-txt" style="color:var(--cyan);">22°</b></label>
+                        <input type="range" min="10" max="50" value="22" oninput="changeAngle(this.value)">
                     </div>
-                    <button class="btn" onclick="completeInsertion()">إتمام الإدخال ومراقبة ومضة الدم 💉</button>
+                    <button class="btn" onclick="executePuncture()">إتمام الوخز ومراقبة الـ Flashback 💉</button>
                 `;
-            } else if (gameState.step === 5) {
+            } else if (game.step === 5) {
                 location.reload();
             }
 
-            document.getElementById('hud-step').innerText = Math.min(gameState.step, 4) + " / 4";
-            document.getElementById('hud-score').innerText = gameState.score;
+            document.getElementById('hud-step').innerText = Math.min(game.step, 4) + " / 4";
+            document.getElementById('hud-score').innerText = game.score;
         }
 
-        function adjustAngle(val) {
-            gameState.angle = Number(val);
+        function changeAngle(val) {
+            game.angle = Number(val);
             document.getElementById('ang-txt').innerText = val + "°";
-            cannulaGroup.rotation.z = (val * Math.PI) / 180;
-            cannulaGroup.position.x = -1.5 + (val * 0.005);
+            needleGroup.rotation.z = (val * Math.PI) / 180;
+            needleGroup.position.x = -1.4 + (val * 0.004);
         }
 
-        function completeInsertion() {
-            if (gameState.angle >= 15 && gameState.angle <= 30) {
-                gameState.score += 350;
-                flashMesh.material.opacity = 0.9; // ظهور ومضة الدم الحمراء!
-                gameState.step = 5;
-                updateCloud('🎉 نجحت العملية بنجاح تام!', `مجموع نقاطك: ${gameState.score} نقطة. تم تأمين الخط الوريدي بمهارة عالية وإعطاء الإرواء المناسب لتجنب PONV.`);
-                document.getElementById('action-controls').innerHTML = `<button class="btn" onclick="nextStep()">إعادة المحاكاة 🔄</button>`;
+        function executePuncture() {
+            if (game.angle >= 15 && game.angle <= 30) {
+                game.score += 400;
+                fMesh.material.opacity = 0.92; // ظهور ومضة الدم الحمراء داخل الغرفة ثلاثية الأبعاد!
+                game.step = 5;
+                updateCloud('🎉 تمت عملية زرق الكانيولا بنجاح تام!', `مجموع نقاطك الكلي: ${game.score} نقطة. تم تأمين الخط الوريدي للعمليات القيصرية وإعطاء الإرواء بنجاح.`);
+                document.getElementById('action-controls').innerHTML = `<button class="btn" onclick="nextStep()">إعادة المحاكاة الجديدة 🔄</button>`;
             } else {
-                updateCloud('⚠️ زاوية خاطئة!', 'الزاوية إما حادة جداً (تخترق الجدار الخلفي) أو سطحية جداً. اضبطها بين 15° و 30°!');
+                updateCloud('⚠️ زاوية إدخال خاطئة!', 'الزاوية غير مناسبة؛ الزاوية المثالية للاختراق الناجح يجب أن تكون بين 15° و 30°.');
             }
-            document.getElementById('hud-score').innerText = gameState.score;
+            document.getElementById('hud-score').innerText = game.score;
         }
 
-        // --- 4. حلقة الرسم Animation Loop ---
+        // --- 4. حلقة الرسم والاستجابة (Render Loop) ---
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         }
         animate();
 
-        // التجاوب مع حجم الشاشة
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
