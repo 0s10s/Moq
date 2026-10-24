@@ -2,393 +2,201 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>الخصاوي الكبرى - منصة المهام العملاقة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فريق بحث التخرج | مقارنة التخدير العام والتخدير النصفي</title>
+    <!-- استيراد الخطوط والأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
+
         body {
-            background: linear-gradient(145deg, #0f2b1d, #071a10);
+            background-color: #0f172a;
+            color: #f8fafc;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
-        /* الحاوية الرئيسية */
-        .dashboard {
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-        /* الرأس العلوي */
-        .header {
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            border: 1px solid #ffb34755;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .logo h1 {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #ffd966, #ffaa33);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 5px #ffaa3344;
-        }
-        .balance-card {
-            background: #1e2a1aee;
-            padding: 10px 25px;
-            border-radius: 50px;
-            border-right: 6px solid #ffaa33;
-        }
-        .balance-card span {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffcc66;
-        }
-        .sub {
-            color: #bbaa77;
-            font-size: 0.8rem;
-        }
-        /* شبكة المهام */
-        .tasks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+
+        header {
+            text-align: center;
             margin-bottom: 40px;
         }
-        .task-card {
-            background: #251f16e6;
-            backdrop-filter: blur(8px);
-            border-radius: 48px;
-            padding: 20px;
-            transition: 0.2s;
-            border: 1px solid #b87c3a;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+
+        header h1 {
+            font-size: 2rem;
+            color: #38bdf8;
+            margin-bottom: 10px;
         }
-        .task-card:hover {
-            transform: translateY(-5px);
-            border-color: #ffbb55;
+
+        header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
         }
-        .task-icon {
-            font-size: 3.5rem;
-            text-align: center;
-        }
-        .task-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-align: center;
-            margin: 15px 0;
-            color: #ffdd99;
-        }
-        .task-desc {
-            background: #00000044;
-            padding: 12px;
-            border-radius: 30px;
-            text-align: center;
-            color: #f0e2b6;
-            margin-bottom: 20px;
-        }
-        .reward-hint {
-            font-size: 0.9rem;
-            color: #ffaa66;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        button {
-            width: 100%;
-            background: linear-gradient(95deg, #f39c12, #e67e22);
-            border: none;
-            padding: 14px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            border-radius: 60px;
-            color: #2c1c0a;
-            cursor: pointer;
-            transition: 0.1s;
-            box-shadow: 0 5px 0 #a55800;
-        }
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #a55800;
-        }
-        .lock-btn {
-            background: #4a3a28;
-            box-shadow: none;
-            cursor: default;
-            opacity: 0.6;
-        }
-        .side-stats {
-            background: #1a2a1acc;
-            border-radius: 40px;
-            padding: 20px;
-            margin-top: 20px;
+
+        /* حاوية أعضاء الفريق */
+        .team-container {
             display: flex;
-            justify-content: space-between;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1000px;
+            width: 100%;
         }
-        .stat-item {
-            background: #00000066;
-            border-radius: 50px;
-            padding: 10px 20px;
-            flex: 1;
+
+        /* بطاقة الطالب التفاعلية */
+        .student-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            width: 240px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
         }
-        .fake-withdraw {
-            background: #3a2819;
-            text-align: center;
-            padding: 12px;
-            border-radius: 50px;
-            margin-top: 20px;
-            color: #bb8855;
-            font-weight: bold;
+
+        /* تأثير التكبير والتوسع عند اللمس أو التحويم */
+        .student-card:hover, .student-card.active {
+            transform: scale(1.08);
+            background: #334155;
+            border-color: #38bdf8;
+            box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.15), 0 10px 10px -5px rgba(56, 189, 248, 0.1);
+            z-index: 10;
         }
-        .leaderboard {
-            background: #181c12aa;
-            border-radius: 40px;
-            padding: 15px;
-            margin-top: 20px;
+
+        /* صورة الطالب */
+        .student-img-wrapper {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 15px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #38bdf8;
+            transition: transform 0.4s ease;
         }
-        @media (max-width:700px){
-            .header{ flex-direction: column; gap:15px; text-align:center;}
+
+        .student-card:hover .student-img-wrapper {
+            transform: scale(1.05);
+        }
+
+        .student-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* اسم الطالب والدور */
+        .student-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+        }
+
+        .student-role {
+            font-size: 0.9rem;
+            color: #38bdf8;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        /* صندوق المعلومات المخفي/الظاهري بالتفاعل */
+        .student-info {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            text-align: right;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-top: 0;
+        }
+
+        .student-card:hover .student-info,
+        .student-card.active .student-info {
+            max-height: 150px;
+            opacity: 1;
+            padding-top: 10px;
+        }
+
+        .student-info p {
+            margin-bottom: 4px;
+        }
+
+        /* تصميم متجاوب للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .team-container {
+                gap: 20px;
+            }
+            .student-card {
+                width: 100%;
+                max-width: 280px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <!-- الرأس -->
-    <div class="header">
-        <div class="logo">
-            <h1>🐫 الخصاوي الكبرى 🪙</h1>
-            <div class="sub">امبراطورية المهام السريعة</div>
+    <header>
+        <h1>فريق بحث التخرج</h1>
+        <p>مقارنة معدل حدوث الغثيان والقيء بين التخدير العام والتخدير النصفي الشوكي</p>
+    </header>
+
+    <div class="team-container">
+        
+        <!-- الطالب الأول -->
+        <div class="student-card" onclick="this.classList.toggle('active')">
+            <div class="student-img-wrapper">
+                <!-- استبدل الرابط أدناه برابط صورة الطالب أو مسارها المحلي -->
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="صورة الباحث">
+            </div>
+            <div class="student-name">مقتدى علي</div>
+            <div class="student-role">باحث رئيسي</div>
+            <div class="student-info">
+                <p><strong>الدور:</strong> جمع البيانات والتحليل الإحصائي</p>
+                <p><strong>المرحلة:</strong> التخرج (2025/2026)</p>
+            </div>
         </div>
-        <div class="balance-card">
-            📦 رصيد الخصاوي: <span id="totalKhasawi">0</span> 🪙
-            <div class="sub">آخر تحديث فوري</div>
+
+        <!-- الطالب الثاني (أضف زملائك هنا) -->
+        <div class="student-card" onclick="this.classList.toggle('active')">
+            <div class="student-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="صورة الباحث">
+            </div>
+            <div class="student-name">اسم الزميل الثاني</div>
+            <div class="student-role">عضو الفريق</div>
+            <div class="student-info">
+                <p><strong>الدور:</strong> مراجعة الأدبيات وصياغة الفصول</p>
+                <p><strong>المرحلة:</strong> التخرج (2025/2026)</p>
+            </div>
         </div>
+
+        <!-- الطالب الثالث -->
+        <div class="student-card" onclick="this.classList.toggle('active')">
+            <div class="student-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="صورة الباحث">
+            </div>
+            <div class="student-name">اسم الزميل الثالث</div>
+            <div class="student-role">عضو الفريق</div>
+            <div class="student-info">
+                <p><strong>الدور:</strong> التنسيق السريري وتوثيق الحالات</p>
+                <p><strong>المرحلة:</strong> التخرج (2025/2026)</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- شبكة المهام (3 مهام) -->
-    <div class="tasks-grid" id="tasksContainer"></div>
-
-    <!-- إحصائيات جانبية وهمية -->
-    <div class="side-stats">
-        <div class="stat-item">🏆 المتصدر اليوم: <strong>ابوخالد</strong> (12,340 خصاوي)</div>
-        <div class="stat-item">⚡ سرعة الإنجاز: <strong>فائقة</strong></div>
-        <div class="stat-item">🎁 مكافأة التسلسل: <span id="comboBonus">0</span> خصاوي</div>
-    </div>
-
-    <!-- لوحة متابعين وهمية -->
-    <div class="leaderboard">
-        💎 قائمة كبار الخصاوية 💎 <br>
-        1. 🥇 ابوخالد - 14300 خصاوي &nbsp;&nbsp; 2. 🥈 سيف - 11200 &nbsp;&nbsp; 3. 🥉 العنود - 9800
-    </div>
-
-    <div class="fake-withdraw">
-        🚫 السحب غير متاح حالياً (تحديث النظام) 🚫
-    </div>
-    <div style="text-align:center; margin-top:12px; font-size:12px; color:#5e5a4a;">
-        نظام داخلي لتحديد الأرباح اليومية
-    </div>
-</div>
-
-<script>
-    // --------------------------------------------------------------
-    // بيانات المهام : (اسم، ايقونة، وصف، الربح الأساسي، شرط فتح)
-    // نعمل نظام تطور: المهمة الثانية تتفتح بعد 3 انجازات للمهمة الأولى
-    // المهمة الثالثة تتفتح بعد 5 انجازات للمهمة الثانية
-    // --------------------------------------------------------------
-    let kh = 0;            // رصيد الخصاوي
-    let countTask1 = 0;    // كم مرة تمت المهمة1 (جمع الخصاوي)
-    let countTask2 = 0;    // كم مرة تمت المهمة2 (لحسات وماصات)
-    let countTask3 = 0;    // المهمة الثالثة (تقعد علي تربح ضعف)
-    
-    let combo = 0;          // كومبو وهمي يزيد مع كل مهمة متتالية
-    
-    // عناصر
-    const totalSpan = document.getElementById('totalKhasawi');
-    const comboBonusSpan = document.getElementById('comboBonus');
-    const tasksContainer = document.getElementById('tasksContainer');
-    
-    // تعريف المهام
-    const tasks = [
-        {
-            id: 1,
-            name: "🥕 جمع الخصاوي",
-            icon: "🐪",
-            desc: "اضغط لتجمع الخصاوي من الصحراء الافتراضية",
-            baseReward: 5,
-            isLocked: false,
-            condition: () => true,
-            action: () => { 
-                let reward = 5 + Math.floor(Math.random() * 6); // 5-10
-                if(combo > 2) reward = Math.floor(reward * 1.3);
-                addKhasawi(reward);
-                countTask1++;
-                updateCombo(1);
-                showMsg(`✅ تم جمع ${reward} خصاوي! العدد الكلي ${kh}`);
-                if(countTask1 === 3) enableTask(2);
-                if(countTask1 === 7) enableTask(3);
-            }
-        },
-        {
-            id: 2,
-            name: "👅 لحسات وماصات",
-            icon: "🍭",
-            desc: "لحس ومص .. يزيد أرباحك 3 أضعاف مؤقت",
-            baseReward: 12,
-            isLocked: true,
-            condition: () => countTask1 >= 3,
-            action: () => {
-                let extra = Math.floor(Math.random() * 15) + 12; // 12-26
-                if(combo > 3) extra = extra * 2;
-                addKhasawi(extra);
-                countTask2++;
-                updateCombo(2);
-                showMsg(`🍬 لحس ومص ينتج ${extra} خصاوي ، بريق الخصاوية يزداد`);
-                if(countTask2 >= 5) enableTask(3);
-            }
-        },
-        {
-            id: 3,
-            name: "💺 تقعد علي .. تربح ضعف",
-            icon: "💺",
-            desc: "اضغط واجلس على الكنز .. مضاعف الربح لكل مهمة سابقة",
-            baseReward: 0,
-            isLocked: true,
-            condition: () => countTask2 >= 5,
-            action: () => {
-                // مضاعفة الرصيد الحالي (تأثير وهمي خرافي)
-                let old = kh;
-                let doubled = kh;
-                addKhasawi(doubled);
-                countTask3++;
-                updateCombo(3);
-                showMsg(`⚡ البركة: قعدت علينا وضاعفت رصيدك! كان ${old} صار ${kh} ⚡`);
-                if(countTask3 === 1) showMsg(`🎉 انت حققت معجزة الخصاوي! الناس تشوفك اسطورة 🎉`);
-            }
-        }
-    ];
-    
-    function addKhasawi(amount) {
-        kh += amount;
-        totalSpan.innerText = Math.floor(kh);
-        // لا سقف للرصيد
-    }
-    
-    function updateCombo(taskId) {
-        combo++;
-        comboBonusSpan.innerText = combo;
-        if(combo % 7 === 0) {
-            let gift = 50;
-            addKhasawi(gift);
-            showMsg(`🎁 كومبو رهيب! هدية ${gift} خصاوي إضافية!`);
-        }
-        setTimeout(() => {
-            if(combo > 0) combo--;
-            comboBonusSpan.innerText = combo;
-        }, 8000);
-    }
-    
-    function enableTask(taskId) {
-        const taskObj = tasks.find(t => t.id === taskId);
-        if(taskObj && taskObj.isLocked === true) {
-            taskObj.isLocked = false;
-            renderTasks();
-            showMsg(`🔓 تم فتح مهمة جديدة: "${taskObj.name}" 🔓`);
-        }
-    }
-    
-    function showMsg(msg) {
-        // نضيف رسالة عائمة بسيطة تنبثق (console + alert اختياري؟ لا نستخدم alert مزعج)
-        // نعمل تنبيه صغير مؤقت
-        let notif = document.createElement('div');
-        notif.innerText = msg;
-        notif.style.position = 'fixed';
-        notif.style.bottom = '20px';
-        notif.style.left = '20px';
-        notif.style.backgroundColor = '#000000aa';
-        notif.style.backdropFilter = 'blur(10px)';
-        notif.style.padding = '12px 20px';
-        notif.style.borderRadius = '40px';
-        notif.style.color = '#ffdd99';
-        notif.style.borderRight = '4px solid gold';
-        notif.style.zIndex = '999';
-        notif.style.fontSize = '0.9rem';
-        document.body.appendChild(notif);
-        setTimeout(() => notif.remove(), 2500);
-    }
-    
-    function renderTasks() {
-        tasksContainer.innerHTML = '';
-        tasks.forEach(task => {
-            const card = document.createElement('div');
-            card.className = 'task-card';
-            let lockHtml = '';
-            let btnDisabled = false;
-            let btnText = 'ابدأ المهمة';
-            if(task.isLocked) {
-                btnDisabled = true;
-                btnText = '🔒 مغلق (اكمل سابقه)';
-                lockHtml = '<div style="text-align:center; font-size:0.8rem;">🔒 يتطلب إنجاز المهام السابقة</div>';
-            }
-            // وصف الاضعاف للمهمة الثالثة
-            let extraDesc = '';
-            if(task.id === 3 && !task.isLocked) extraDesc = '<span style="color:#ffaa77;">✨ مضاعفة الرصيد الحالي ✨</span><br>';
-            card.innerHTML = `
-                <div class="task-icon">${task.icon}</div>
-                <div class="task-title">${task.name}</div>
-                <div class="task-desc">${task.desc}</div>
-                ${extraDesc}
-                <div class="reward-hint">💰 ربح تقديري: ${task.id===1?'5-10':(task.id===2?'12-26':'يضاعف رصيدك')} خصاوي</div>
-                ${lockHtml}
-                <button class="${btnDisabled ? 'lock-btn' : ''}" ${btnDisabled ? 'disabled' : ''} data-id="${task.id}">${btnText}</button>
-            `;
-            tasksContainer.appendChild(card);
-            if(!btnDisabled){
-                const btn = card.querySelector('button');
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    tasks.find(t=>t.id===task.id).action();
-                    renderTasks(); // تحديث عداد المهام وفتح التالي
-                });
-            }
-        });
-    }
-    
-    // فتح أول مهمة بشكل تلقائي
-    tasks[0].isLocked = false;
-    renderTasks();
-    
-    // سر خفي: إذا وصل الرصيد لـ 300 تظهر رسالة "مقلب مخفي"
-    const originalAdd = addKhasawi;
-    window.addKhasawi = function(amt) {
-        originalAdd(amt);
-        if(kh >= 300 && kh < 310) {
-            showMsg("🤫 مبروك صار عندك 300 خصاوي.. لكن لا يوجد سحب 🤫 هذا الموقع مقلب تقني محد يعرف 💣");
-            setTimeout(() => {
-                showMsg("😂 اضحك مع اخوانك .. كل الأرقام وهمية والفكرة تسلية!");
-            }, 4000);
-        }
-        if(kh >= 1000){
-            showMsg("🏆 أسطورة الخصاوي! لكن تذكر انها لعبة وهمية 🏆");
-        }
-    };
-    
-    // مراقبة الرصيد
-    setInterval(() => {
-        totalSpan.innerText = Math.floor(kh);
-    }, 100);
-</script>
 </body>
 </html>
