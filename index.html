@@ -3,91 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فريق بحث التخرج | مقارنة التخدير العام والتخدير النصفي</title>
-    <!-- استيراد الخطوط والأيقونات -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>فريق بحث التخرج | رحلة الفضاء الأكاديمية</title>
+    <!-- خط القاهرة الحديث -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: #0f172a;
+            background-color: #030712;
             color: #f8fafc;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
+        /* خلفية الفضاء والنجوم المتحركة */
+        #space-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+        }
+
+        /* حاوية الموقع الرئيسية */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* الهيدر الأكاديمي الفضائي */
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            animation: fadeInDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         header h1 {
-            font-size: 2rem;
-            color: #38bdf8;
-            margin-bottom: 10px;
+            font-size: 2.6rem;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            font-weight: 900;
+            letter-spacing: -1px;
         }
 
         header p {
             color: #94a3b8;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
-        /* حاوية أعضاء الفريق */
-        .team-container {
+        /* شريط التنقل بين الأقسام (ثابت وزجاجي) */
+        .nav-tabs {
             display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
             justify-content: center;
-            max-width: 1000px;
-            width: 100%;
+            gap: 15px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            animation: fadeIn 1.5s ease forwards;
         }
 
-        /* بطاقة الطالب التفاعلية */
+        .tab-btn {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: #38bdf8;
+            color: #030712;
+            border-color: #38bdf8;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.4);
+        }
+
+        /* قسم الفريق الزجاجي الفضائي */
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
         .student-card {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 20px;
-            width: 240px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 30px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border: 1px solid #334155;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* تأثير التكبير والتوسع عند اللمس أو التحويم */
-        .student-card:hover, .student-card.active {
-            transform: scale(1.08);
-            background: #334155;
-            border-color: #38bdf8;
-            box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.15), 0 10px 10px -5px rgba(56, 189, 248, 0.1);
-            z-index: 10;
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
-        /* صورة الطالب */
+        .student-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.15);
+        }
+
+        .student-card:hover::before {
+            opacity: 1;
+        }
+
         .student-img-wrapper {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 15px auto;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
             border-radius: 50%;
             overflow: hidden;
             border: 3px solid #38bdf8;
-            transition: transform 0.4s ease;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            transition: transform 0.5s ease;
         }
 
         .student-card:hover .student-img-wrapper {
-            transform: scale(1.05);
+            transform: scale(1.08) rotate(2deg);
         }
 
         .student-img-wrapper img {
@@ -96,107 +171,264 @@
             object-fit: cover;
         }
 
-        /* اسم الطالب والدور */
         .student-name {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            color: #f1f5f9;
+            color: #f8fafc;
             margin-bottom: 5px;
         }
 
         .student-role {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #38bdf8;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-weight: 600;
         }
 
-        /* صندوق المعلومات المخفي/الظاهري بالتفاعل */
+        /* تفاصيل الطالب التفاعلية المنسدلة بسلاسة */
         .student-info {
             max-height: 0;
             opacity: 0;
             overflow: hidden;
-            transition: all 0.4s ease-in-out;
-            font-size: 0.85rem;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 0.9rem;
             color: #cbd5e1;
             text-align: right;
-            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 0;
+            margin-top: 10px;
         }
 
-        .student-card:hover .student-info,
-        .student-card.active .student-info {
-            max-height: 150px;
+        .student-card.active .student-info,
+        .student-card:hover .student-info {
+            max-height: 160px;
             opacity: 1;
-            padding-top: 10px;
+            padding-top: 12px;
         }
 
         .student-info p {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
-        /* تصميم متجاوب للشاشات الصغيرة */
-        @media (max-width: 768px) {
-            .team-container {
-                gap: 20px;
-            }
-            .student-card {
-                width: 100%;
-                max-width: 280px;
-            }
+        /* زر تحميل البحث PDF الفاخر */
+        .pdf-section {
+            text-align: center;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+            color: #030712;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
+            margin-top: 20px;
+        }
+
+        .pdf-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.6);
+        }
+
+        /* زر الموسيقى العائم الفضائي */
+        .music-float-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            border-radius: 50px;
+            padding: 12px 22px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .music-float-btn:hover {
+            background: #38bdf8;
+            color: #030712;
+            transform: scale(1.08);
+        }
+
+        /* تأثيرات الحركة (Animations) */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>فريق بحث التخرج</h1>
-        <p>مقارنة معدل حدوث الغثيان والقيء بين التخدير العام والتخدير النصفي الشوكي</p>
-    </header>
+    <!-- خلفية النجوم المتحركة عبر الكانفاس -->
+    <canvas id="space-canvas"></canvas>
 
-    <div class="team-container">
-        
-        <!-- الطالب الأول -->
-        <div class="student-card" onclick="this.classList.toggle('active')">
-            <div class="student-img-wrapper">
-                <!-- استبدل الرابط أدناه برابط صورة الطالب أو مسارها المحلي -->
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="صورة الباحث">
-            </div>
-            <div class="student-name">مقتدى علي</div>
-            <div class="student-role">باحث رئيسي</div>
-            <div class="student-info">
-                <p><strong>الدور:</strong> جمع البيانات والتحليل الإحصائي</p>
-                <p><strong>المرحلة:</strong> التخرج (2025/2026)</p>
-            </div>
+    <div class="container">
+        <!-- الهيدر -->
+        <header>
+            <h1>مقارنة معدل حدوث الغثيان والقيء</h1>
+            <p>بين التخدير العام والتخدير النصفي الشوكي لدى المريضات الخاضعات لعمليات القيصرية</p>
+        </header>
+
+        <!-- شريط التنقل السلس -->
+        <div class="nav-tabs">
+            <button class="tab-btn active">فريق البحث</button>
+            <button class="tab-btn">خلفية البحث</button>
+            <button class="tab-btn">المنهجية</button>
+            <button class="tab-btn">النتائج</button>
         </div>
 
-        <!-- الطالب الثاني (أضف زملائك هنا) -->
-        <div class="student-card" onclick="this.classList.toggle('active')">
-            <div class="student-img-wrapper">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="صورة الباحث">
+        <!-- قسم فريق البحث -->
+        <h2 class="section-title">طاقم الباحثين الأكاديمي</h2>
+        <div class="team-grid">
+            
+            <!-- الباحث الأول -->
+            <div class="student-card" onclick="this.classList.toggle('active')">
+                <div class="student-img-wrapper">
+                    <img src="images/moqtada.jpg" alt="مقتدى علي" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'">
+                </div>
+                <div class="student-name">مقتدى علي</div>
+                <div class="student-role">الباحث الرئيسي</div>
+                <div class="student-info">
+                    <p><strong>المهمة:</strong> تصميم البحث والتحليل الإحصائي</p>
+                    <p><strong>السنة الأكاديمية:</strong> 2025/2026</p>
+                </div>
             </div>
-            <div class="student-name">اسم الزميل الثاني</div>
-            <div class="student-role">عضو الفريق</div>
-            <div class="student-info">
-                <p><strong>الدور:</strong> مراجعة الأدبيات وصياغة الفصول</p>
-                <p><strong>المرحلة:</strong> التخرج (2025/2026)</p>
+
+            <!-- الباحث الثاني -->
+            <div class="student-card" onclick="this.classList.toggle('active')">
+                <div class="student-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" alt="عضو الفريق">
+                </div>
+                <div class="student-name">اسم الزميل الثاني</div>
+                <div class="student-role">عضو الفريق السريري</div>
+                <div class="student-info">
+                    <p><strong>المهمة:</strong> توثيق الحالات ومتابعة المريضات</p>
+                    <p><strong>السنة الأكاديمية:</strong> 2025/2026</p>
+                </div>
             </div>
+
+            <!-- الباحث الثالث -->
+            <div class="student-card" onclick="this.classList.toggle('active')">
+                <div class="student-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="عضو الفريق">
+                </div>
+                <div class="student-name">اسم الزميل الثالث</div>
+                <div class="student-role">مراجعة الأدبيات</div>
+                <div class="student-info">
+                    <p><strong>المهمة:</strong> صياغة الفصول والمصادر الطبية</p>
+                    <p><strong>السنة الأكاديمية:</strong> 2025/2026</p>
+                </div>
+            </div>
+
         </div>
 
-        <!-- الطالب الثالث -->
-        <div class="student-card" onclick="this.classList.toggle('active')">
-            <div class="student-img-wrapper">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300" alt="صورة الباحث">
-            </div>
-            <div class="student-name">اسم الزميل الثالث</div>
-            <div class="student-role">عضو الفريق</div>
-            <div class="student-info">
-                <p><strong>الدور:</strong> التنسيق السريري وتوثيق الحالات</p>
-                <p><strong>المرحلة:</strong> التخرج (2025/2026)</p>
-            </div>
+        <!-- قسم تحميل البحث PDF -->
+        <div class="pdf-section">
+            <h2 style="color: #f8fafc; margin-bottom: 10px;">توثيق وعرض البحث الرسمي</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">يمكنك تحميل النسخة الحالية من ملف الـ PDF الخاص ببحث التخرج والاستعراض:</p>
+            <a href="research.pdf" class="pdf-btn" target="_blank">
+                📄 تحميل واستعراض ملف الـ PDF
+            </a>
         </div>
-
     </div>
 
+    <!-- عنصر الصوت الخلفي -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- زر الموسيقى العائم -->
+    <button class="music-float-btn" onclick="toggleMusic()">
+        🎵 <span id="music-label">تشغيل موسيقى الفضاء</span>
+    </button>
+
+    <!-- سكريبت الفضاء الحركي والموسيقى -->
+    <script>
+        // تأثير النجوم المتحركة في الخلفية (Space Stars Canvas)
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const stars = Array.from({ length: 150 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 1.5,
+            alpha: Math.random(),
+            speed: Math.random() * 0.2 + 0.05
+        }));
+
+        function animateSpace() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            
+            stars.forEach(star => {
+                ctx.globalAlpha = star.alpha;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // حركة النجوم للأعلى ببطء
+                star.y -= star.speed;
+                if (star.y < 0) star.y = height;
+
+                // وميض النجوم
+                star.alpha += (Math.random() - 0.5) * 0.03;
+                if (star.alpha < 0.1) star.alpha = 0.1;
+                if (star.alpha > 1) star.alpha = 1;
+            });
+
+            requestAnimationFrame(animateSpace);
+        }
+        animateSpace();
+
+        // تحكم الموسيقى
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const label = document.getElementById('music-label');
+            
+            if (music.paused) {
+                music.play().then(() => {
+                    label.innerText = "إيقاف الموسيقى 🔇";
+                }).catch(e => {
+                    alert("يرجى التأكد من رفع ملف music.mp3 في مجود المشروع!");
+                });
+            } else {
+                music.pause();
+                label.innerText = "تشغيل موسيقى الفضاء 🎵";
+            }
+        }
+    </script>
 </body>
 </html>
